@@ -1,50 +1,58 @@
 package org.target;
 
 import com.google.common.base.Charsets;
-import com.google.common.hash.PrimitiveSink;
+import com.google.common.hash.HashFunction;
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
 
 public class Content<T> {
-	public class Funnel implements com.google.common.hash.Funnel<Content<T>> {
+    private final String name;
+    private final String description;
+    private final Long contentId;
+    private final T content;
+    private final Double weight;
 
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -4354370185839330195L;
+    public Content(String name, String description, Long contentId, T content, Double weight)
+            throws IncorrectWeightException {
+        this.name = name;
+        this.description = description;
+        this.contentId = contentId;
+        this.content = content;
+        if (weight <= 0)
+            throw new IncorrectWeightException(weight);
+        this.weight = weight;
+    }
 
-		@Override
-		public void funnel(Content<T> from, PrimitiveSink into) {
-			into.putString(name, Charsets.UTF_8)
-			.putLong(contentId);
-		}
+    public String getName() {
+        return name;
+    }
 
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	private final String name;
-	private final String description;
-	private final Long contentId;
-	private final T content;
-	
-	public Content(String name, String description, Long contentId,
-			T content) {
-		this.name = name;
-		this.description = description;
-		this.contentId = contentId;
-		this.content = content;
-	}
+    public Long getContentId() {
+        return contentId;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public T getContent() {
+        return content;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public Double getWeight() {
+        return weight;
+    }
 
-	public Long getContentId() {
-		return contentId;
-	}
+    @Override
+    public int hashCode() {
+        HashFunction hf = Hashing.murmur3_32();
+        Hasher hasher = hf.newHasher().putString(name, Charsets.UTF_8).putString(description, Charsets.UTF_8)
+                .putLong(contentId).putDouble(weight).putInt(content.hashCode());
+        return hasher.hash().asInt();
+    }
 
-	public T getContent() {
-		return content;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        return this.hashCode() == obj.hashCode();
+    }
 }
