@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import org.apache.lucene.search.NumericRangeQuery;
+import org.apache.lucene.search.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uncommons.maths.random.XORShiftRNG;
@@ -18,6 +20,7 @@ import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 
 public class Campaign {
+    public static final String DATE_FIELD = "date";
     private static Logger logger = LoggerFactory.getLogger(Campaign.class);
     private double total = 0;
     private final Long id;
@@ -25,6 +28,7 @@ public class Campaign {
     private final Calendar startDate, endDate;
     private final NavigableMap<Double, Content<?>> map = new TreeMap<Double, Content<?>>();
     private final HashCode hashcode;
+    private final Query query;
 
     public Long getId() {
         return id;
@@ -33,7 +37,7 @@ public class Campaign {
     public String getName() {
         return name;
     }
-    
+
     public Calendar getStartDate() {
         return startDate;
     }
@@ -41,7 +45,6 @@ public class Campaign {
     public Calendar getEndDate() {
         return endDate;
     }
-
 
     public Campaign(Long id, String name, Calendar sDate, Calendar eDate, Set<Content<?>> contentSet) {
         this.id = id;
@@ -57,6 +60,8 @@ public class Campaign {
             hasher.putInt(content.hashCode());
         });
         this.hashcode = hasher.hash();
+        this.query = NumericRangeQuery.newLongRange(DATE_FIELD, startDate.getTimeInMillis(), endDate.getTimeInMillis(),
+                true, false);
     }
 
     public Content<?> resolveContent(UUID uuid) {
@@ -83,5 +88,9 @@ public class Campaign {
     @Override
     public boolean equals(Object obj) {
         return this.hashCode() == obj.hashCode();
+    }
+
+    public Query getQuery() {
+        return query;
     }
 }
