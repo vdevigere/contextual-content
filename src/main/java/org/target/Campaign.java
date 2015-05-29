@@ -9,6 +9,7 @@ import java.util.UUID;
 
 import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uncommons.maths.random.XORShiftRNG;
@@ -25,7 +26,7 @@ public class Campaign {
     private double total = 0;
     private final Long id;
     private final String name;
-    private final Calendar startDate, endDate;
+    private final DateTime startDate, endDate;
     private final NavigableMap<Double, Content<?>> map = new TreeMap<Double, Content<?>>();
     private final HashCode hashcode;
     private final Query query;
@@ -38,15 +39,15 @@ public class Campaign {
         return name;
     }
 
-    public Calendar getStartDate() {
+    public DateTime getStartDate() {
         return startDate;
     }
 
-    public Calendar getEndDate() {
+    public DateTime getEndDate() {
         return endDate;
     }
 
-    public Campaign(Long id, String name, Calendar sDate, Calendar eDate, Set<Content<?>> contentSet) {
+    public Campaign(Long id, String name, DateTime sDate, DateTime eDate, Set<Content<?>> contentSet) {
         this.id = id;
         this.name = name;
         this.startDate = sDate;
@@ -60,7 +61,7 @@ public class Campaign {
             hasher.putInt(content.hashCode());
         });
         this.hashcode = hasher.hash();
-        this.query = NumericRangeQuery.newLongRange(DATE_FIELD, startDate.getTimeInMillis(), endDate.getTimeInMillis(),
+        this.query = NumericRangeQuery.newLongRange(DATE_FIELD, startDate.getMillis(), endDate.getMillis(),
                 true, false);
     }
 

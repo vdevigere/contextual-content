@@ -6,6 +6,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.Calendar;
 import java.util.UUID;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
@@ -28,9 +29,8 @@ public class CampaignTest {
 
     @Test
     public void ensureContentIsResolvedConsistently() {
-        Calendar now = Calendar.getInstance();
-        Calendar dayFromNow = Calendar.getInstance();
-        dayFromNow.add(Calendar.DATE, 1);
+        DateTime now = new DateTime();
+        DateTime dayFromNow = new DateTime().plusDays(1);
         Campaign campaign = new Campaign(1L, "DUMMY", now, dayFromNow, Sets.newSet(contentA, contentB));
         assertThat(campaign.resolveContent("blahblahblahblahblah".getBytes()), equalTo(contentA));
         assertThat(campaign.resolveContent("fourfourfourfourfour".getBytes()), equalTo(contentB));
@@ -38,9 +38,8 @@ public class CampaignTest {
 
     @Test
     public void ensureContentIsResolvedConsistentlyHashCode() {
-        Calendar now = Calendar.getInstance();
-        Calendar dayFromNow = Calendar.getInstance();
-        dayFromNow.add(Calendar.DATE, 1);
+        DateTime now = new DateTime();
+        DateTime dayFromNow = new DateTime().plusDays(1);
         Campaign campaign = new Campaign(1L, "DUMMY", now, dayFromNow, Sets.newSet(contentA, contentB));
 
         UUID blahUUID = Generators.nameBasedGenerator().generate("blahblahblahblahblah".getBytes());
@@ -50,8 +49,8 @@ public class CampaignTest {
 
     @Test
     public void testHashCode() throws IncorrectWeightException {
-        Calendar now = Calendar.getInstance();
-        Calendar dayFromNow = Calendar.getInstance();
+        DateTime now = new DateTime();
+        DateTime dayFromNow = new DateTime().plusDays(1);
 
         Content<String> content1 = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
         Content<String> content2 = new Content<String>("B", "B Content", 0L, "Banner B", 25.0);
