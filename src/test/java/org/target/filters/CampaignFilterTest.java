@@ -2,9 +2,9 @@ package org.target.filters;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsMapContaining.hasKey;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
+import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -14,38 +14,33 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.internal.util.collections.Sets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.target.Campaign;
 import org.target.Content;
 import org.target.IncorrectWeightException;
-import org.target.context.UserContext;
 
 import com.fasterxml.uuid.Generators;
 
 public class CampaignFilterTest {
-    
-    private static Logger logger = LoggerFactory.getLogger(CampaignFilterTest.class);
-    
+
     private Campaign currentCampaign;
     private Campaign futureCampaign;
     private Campaign campaignStartsToday;
     private Campaign campaignEndsToday;
-    private List<Campaign> campaignList = new LinkedList<Campaign>();
-    private UserContext userContext = new UserContext();
+    private List<Campaign> campaignList;
+    private Content<String> contentA;
+    private Content<String> contentB;
+    private DateTime today = new DateTime();
+
+    private DateTime _1WeekFromToday = new DateTime().plusWeeks(1);
+
+    private DateTime _2WeeksFromToday = new DateTime().plusWeeks(2);
+
+    private DateTime _1WeekAgoFromToday = new DateTime().minusWeeks(1);
 
     @Before
     public void setupCampaignDateData() throws IncorrectWeightException {
-        Content<String> contentA = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
-        Content<String> contentB = new Content<String>("B", "B Content", 0L, "Banner B", 25.0);
-
-        DateTime today = new DateTime();
-        
-        DateTime _1WeekFromToday = new DateTime().plusWeeks(1);
-        
-        DateTime _2WeeksFromToday = new DateTime().plusWeeks(2);
-        
-        DateTime _1WeekAgoFromToday = new DateTime().minusWeeks(1);
+        this.contentA = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
+        this.contentB = new Content<String>("B", "B Content", 0L, "Banner B", 25.0);
 
         this.currentCampaign = new Campaign(1L, "CURRENT", _1WeekAgoFromToday, _1WeekFromToday, Sets.newSet(contentA,
                 contentB));
@@ -55,7 +50,8 @@ public class CampaignFilterTest {
                 contentB));
         this.campaignEndsToday = new Campaign(1L, "END_TODAY", _1WeekAgoFromToday, today, Sets.newSet(contentA,
                 contentB));
-
+        
+        campaignList = new LinkedList<Campaign>();
         campaignList.add(currentCampaign);
         campaignList.add(campaignStartsToday);
         campaignList.add(campaignEndsToday);
@@ -63,28 +59,22 @@ public class CampaignFilterTest {
     }
 
     @Test
-    public void testFilterOnToday() {
+    public void testSuccessfulFilter() {
         UUID blahUUID = Generators.nameBasedGenerator().generate("blahblahblahblahblah".getBytes());
-        DateTime today = new DateTime();
-        userContext.setTimeStamp(today);
         CampaignFilter campaignFilter = new CampaignFilter(blahUUID);
         Map<String, Content<?>> resolvedContent = campaignFilter.filter(campaignList,
-                campaign -> userContext.isSatisfiedBy(campaign));
-        assertThat(resolvedContent, hasKey("CURRENT"));
-        assertThat(resolvedContent, hasKey("START_TODAY"));
-        assertThat(resolvedContent.size(), equalTo(2));
+                campaign -> true);
+        assertThat(resolvedContent.keySet(), containsInAnyOrder("CURRENT", "FUTURE", "START_TODAY", "END_TODAY"));
+        assertThat(resolvedContent.size(), equalTo(4));
     }
-    
+
     @Test
-    public void testFilterOn1WeekFromToday(){
+    public void testUnsuccessfulFilter() {
         UUID blahUUID = Generators.nameBasedGenerator().generate("blahblahblahblahblah".getBytes());
-        DateTime aWeekFromToday = new DateTime().plusWeeks(1);
-        userContext.setTimeStamp(aWeekFromToday);
         CampaignFilter campaignFilter = new CampaignFilter(blahUUID);
         Map<String, Content<?>> resolvedContent = campaignFilter.filter(campaignList,
-                campaign -> userContext.isSatisfiedBy(campaign));
-        assertThat(resolvedContent, hasKey("FUTURE"));
-        assertThat(resolvedContent.size(), equalTo(1));        
+                campaign -> false);
+        assertThat(resolvedContent.keySet(),empty());
     }
 
 }

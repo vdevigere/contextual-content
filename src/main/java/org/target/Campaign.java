@@ -1,17 +1,15 @@
 package org.target;
 
 import java.nio.ByteBuffer;
-import java.util.Calendar;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import org.apache.lucene.search.NumericRangeQuery;
-import org.apache.lucene.search.Query;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.target.context.UserContext;
 import org.uncommons.maths.random.XORShiftRNG;
 
 import com.google.common.base.Charsets;
@@ -29,7 +27,6 @@ public class Campaign {
     private final DateTime startDate, endDate;
     private final NavigableMap<Double, Content<?>> map = new TreeMap<Double, Content<?>>();
     private final HashCode hashcode;
-    private final Query query;
 
     public Long getId() {
         return id;
@@ -61,8 +58,6 @@ public class Campaign {
             hasher.putInt(content.hashCode());
         });
         this.hashcode = hasher.hash();
-        this.query = NumericRangeQuery.newLongRange(DATE_FIELD, startDate.getMillis(), endDate.getMillis(),
-                true, false);
     }
 
     public Content<?> resolveContent(UUID uuid) {
@@ -90,8 +85,15 @@ public class Campaign {
     public boolean equals(Object obj) {
         return this.hashCode() == obj.hashCode();
     }
-
-    public Query getQuery() {
-        return query;
+    
+    public boolean matches(UserContext userContext){
+        boolean lowerLimitMatch = userContext.getTimeStamp().isAfter(this.startDate);
+        logger.debug("is {} after {}? -> {}", userContext.getTimeStamp(), this.startDate, lowerLimitMatch);
+        
+        boolean upperLimitMatch = userContext.getTimeStamp().isBefore(this.endDate) || userContext.getTimeStamp().equals(this.endDate);
+        logger.debug("is {} before or equal to {}? -> {}", userContext.getTimeStamp(), this.endDate, upperLimitMatch);
+        
+        boolean result = lowerLimitMatch && upperLimitMatch;
+        return result;
     }
 }
