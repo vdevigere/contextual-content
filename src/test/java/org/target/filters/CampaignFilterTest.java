@@ -1,9 +1,6 @@
 package org.target.filters;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -64,8 +61,8 @@ public class CampaignFilterTest {
         CampaignFilter campaignFilter = new CampaignFilter(blahUUID);
         Map<String, Content<?>> resolvedContent = campaignFilter.filter(campaignList,
                 campaign -> true);
-        assertThat(resolvedContent.keySet(), containsInAnyOrder("CURRENT", "FUTURE", "START_TODAY", "END_TODAY"));
-        assertThat(resolvedContent.size(), equalTo(4));
+        assertThat(resolvedContent).containsKeys("CURRENT", "FUTURE", "START_TODAY", "END_TODAY");
+        assertThat(resolvedContent).hasSize(4);
     }
 
     @Test
@@ -74,7 +71,7 @@ public class CampaignFilterTest {
         CampaignFilter campaignFilter = new CampaignFilter(blahUUID);
         Map<String, Content<?>> resolvedContent = campaignFilter.filter(campaignList,
                 campaign -> false);
-        assertThat(resolvedContent.keySet(),empty());
+        assertThat(resolvedContent.keySet()).isEmpty();
     }
 
 }

@@ -1,7 +1,6 @@
 package org.target;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.UUID;
 
@@ -32,8 +31,8 @@ public class CampaignTest {
         DateTime now = new DateTime();
         DateTime dayFromNow = new DateTime().plusDays(1);
         Campaign campaign = new Campaign(1L, "DUMMY", now, dayFromNow, Sets.newSet(contentA, contentB));
-        assertThat(campaign.resolveContent("blahblahblahblahblah".getBytes()), equalTo(contentA));
-        assertThat(campaign.resolveContent("fourfourfourfourfour".getBytes()), equalTo(contentB));
+        assertThat(campaign.resolveContent("blahblahblahblahblah".getBytes())).isEqualTo(contentA);
+        assertThat(campaign.resolveContent("fourfourfourfourfour".getBytes())).isEqualTo(contentB);
     }
 
     @Test
@@ -44,7 +43,7 @@ public class CampaignTest {
 
         UUID blahUUID = Generators.nameBasedGenerator().generate("blahblahblahblahblah".getBytes());
         logger.debug("BlahUUID:{}", blahUUID);
-        assertThat(campaign.resolveContent(blahUUID), equalTo(contentA));
+        assertThat(campaign.resolveContent(blahUUID)).isEqualTo(contentA);
     }
 
     @Test
@@ -58,7 +57,7 @@ public class CampaignTest {
 
         Campaign campaign2 = new Campaign(1L, "DUMMY", now, dayFromNow, Sets.newSet(contentA, contentB));
 
-        assertThat(campaign1, equalTo(campaign2));
+        assertThat(campaign1).isEqualTo(campaign2);
     }
     
     @Test
@@ -71,7 +70,7 @@ public class CampaignTest {
         Campaign campaign = new Campaign(1L, "DUMMY", now, weekFromNow, Sets.newSet(content1, content2));
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now);
-        assertThat(campaign.matches(userContext), is(false));
+        assertThat(campaign.matches(userContext)).isFalse();
     }
     
     @Test
@@ -84,7 +83,7 @@ public class CampaignTest {
         Campaign campaign = new Campaign(1L, "DUMMY", now, weekFromNow, Sets.newSet(content1, content2));
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(weekFromNow);
-        assertThat(campaign.matches(userContext), is(true));
+        assertThat(campaign.matches(userContext)).isTrue();
     }
 
     @Test
@@ -98,6 +97,6 @@ public class CampaignTest {
         Campaign campaign = new Campaign(1L, "DUMMY", weekAgo, weekFromNow, Sets.newSet(content1, content2));
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now);
-        assertThat(campaign.matches(userContext), is(true));
+        assertThat(campaign.matches(userContext)).isTrue();
     }
 }
