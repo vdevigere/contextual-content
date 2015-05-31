@@ -6,14 +6,15 @@ import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.function.Predicate;
 
-import org.assertj.core.api.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.target.context.UserContext;
 import org.uncommons.maths.random.XORShiftRNG;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.HashCode;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
@@ -27,7 +28,7 @@ public class Campaign {
     private final String name;
     private final NavigableMap<Double, Content<?>> map = new TreeMap<Double, Content<?>>();
     private final HashCode hashcode;
-    private Collection<Condition<UserContext>> conditions;
+    private ImmutableList<Predicate<UserContext>> conditions;
 
     public Long getId() {
         return id;
@@ -77,10 +78,10 @@ public class Campaign {
         return this.hashCode() == obj.hashCode();
     }
 
-    public boolean matches(UserContext userContext) {
+    public boolean matchesAll(UserContext userContext) {
         if (conditions != null) {
-            for (Condition<UserContext> condition : conditions) {
-                if (!condition.matches(userContext))
+            for (Predicate<UserContext> condition : conditions) {
+                if (!condition.test(userContext))
                     return false;
             }
         } else {
@@ -88,13 +89,14 @@ public class Campaign {
         }
         return true;
     }
-    
-    public Collection<Condition<UserContext>> getConditions() {
+
+    public Collection<Predicate<UserContext>> getConditions() {
         return conditions;
     }
 
-    public void setConditions(Collection<Condition<UserContext>> conditions) {
-        this.conditions = conditions;
+    @SafeVarargs
+    public final void setConditions(Predicate<UserContext>... conditions) {
+        this.conditions = ImmutableList.copyOf(conditions);
     }
 
 }

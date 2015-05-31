@@ -1,11 +1,13 @@
 package org.target.filters;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.target.filters.DateTimeCondition.timeStampAfterOrEqual;
+import static org.target.filters.DateTimeCondition.timeStampBefore;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.target.context.UserContext;
-
-import static org.assertj.core.api.Assertions.*;
 
 public class DateTimeConditionTest {
 
@@ -14,7 +16,7 @@ public class DateTimeConditionTest {
         DateTime now = new DateTime();
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now);
-        assertThat(userContext).is(DateTimeCondition.isAfterOrEqual(now));
+        assertThat(userContext).matches(timeStampAfterOrEqual(now));
     }
 
     @Test
@@ -22,14 +24,14 @@ public class DateTimeConditionTest {
         DateTime now = new DateTime();
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now.plusDays(1));
-        assertThat(userContext).is(DateTimeCondition.isAfterOrEqual(now));
+        assertThat(userContext).matches(timeStampAfterOrEqual(now));
     }
     @Test
     public void testIsAfterOrEqualWithBeforeCondition() {
         DateTime now = new DateTime();
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now.minusDays(1));
-        assertThat(userContext).isNot(DateTimeCondition.isAfterOrEqual(now));
+        assertThat(userContext).matches(timeStampAfterOrEqual(now).negate());
     }
     
     @Test
@@ -37,7 +39,7 @@ public class DateTimeConditionTest {
         DateTime now = new DateTime();
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now.minusDays(1));
-        assertThat(userContext).is(DateTimeCondition.isBefore(now));
+        assertThat(userContext).matches(timeStampBefore(now));
     }
 
     @Test
@@ -45,7 +47,7 @@ public class DateTimeConditionTest {
         DateTime now = new DateTime();
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now.plusDays(1));
-        assertThat(userContext).isNot(DateTimeCondition.isBefore(now));
+        assertThat(userContext).matches(timeStampBefore(now).negate());
     }
     
     @Test
@@ -53,6 +55,6 @@ public class DateTimeConditionTest {
         DateTime now = new DateTime();
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now);
-        assertThat(userContext).isNot(DateTimeCondition.isBefore(now));
+        assertThat(userContext).matches(timeStampBefore(now).negate());
     }
 }
