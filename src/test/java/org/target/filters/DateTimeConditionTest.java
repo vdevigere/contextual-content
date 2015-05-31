@@ -3,7 +3,7 @@ package org.target.filters;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.target.filters.DateTimeCondition.timeStampAfterOrEqual;
-import static org.target.filters.DateTimeCondition.timeStampBefore;
+import static org.target.filters.DateTimeCondition.*;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -57,4 +57,31 @@ public class DateTimeConditionTest {
         userContext.setTimeStamp(now);
         assertThat(userContext).matches(timeStampBefore(now).negate());
     }
-}
+    
+    /*
+     * Test timeStampBetween with a date which matches the startDate.
+     * expect test to succeed.
+     */
+    @Test
+    public void testTimeStampBetweenWithStartDate(){
+        DateTime startDate = new DateTime();
+        DateTime endDate = startDate.plusWeeks(1);
+        UserContext userContext = new UserContext();
+        userContext.setTimeStamp(startDate);
+        assertThat(userContext).matches(timeStampBetween(startDate, endDate));        
+    }
+
+    /*
+     * Test timeStampBetween with a date which is before the startDate.
+     * expect test to fail.
+     */
+    @Test
+    public void testTimeStampBetweenWithBeforeStartDate(){
+        DateTime startDate = new DateTime();
+        DateTime endDate = startDate.plusWeeks(1);
+        DateTime dateUnderTest = startDate.minusWeeks(1);
+        
+        UserContext userContext = new UserContext();
+        userContext.setTimeStamp(dateUnderTest);
+        assertThat(userContext).matches(timeStampBetween(startDate, endDate).negate());        
+    }}

@@ -26,4 +26,8 @@ public class DateTimeCondition{
             }
         };
     }
+    
+    public static Predicate<UserContext> timeStampBetween(DateTime startDate, DateTime endDate){
+        return timeStampAfterOrEqual(startDate).and(timeStampBefore(endDate));
+    }
 }
