@@ -1,12 +1,13 @@
 package org.target;
 
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import org.joda.time.DateTime;
+import org.assertj.core.api.Condition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.target.context.UserContext;
@@ -24,9 +25,9 @@ public class Campaign {
     private double total = 0;
     private final Long id;
     private final String name;
-    private final DateTime startDate, endDate;
     private final NavigableMap<Double, Content<?>> map = new TreeMap<Double, Content<?>>();
     private final HashCode hashcode;
+    private Collection<Condition<UserContext>> conditions;
 
     public Long getId() {
         return id;
@@ -36,19 +37,9 @@ public class Campaign {
         return name;
     }
 
-    public DateTime getStartDate() {
-        return startDate;
-    }
-
-    public DateTime getEndDate() {
-        return endDate;
-    }
-
-    public Campaign(Long id, String name, DateTime sDate, DateTime eDate, Set<Content<?>> contentSet) {
+    public Campaign(Long id, String name, Set<Content<?>> contentSet) {
         this.id = id;
         this.name = name;
-        this.startDate = sDate;
-        this.endDate = eDate;
         HashFunction hf = Hashing.murmur3_32();
         Hasher hasher = hf.newHasher().putString(this.name, Charsets.UTF_8).putLong(this.id);
 
@@ -85,15 +76,25 @@ public class Campaign {
     public boolean equals(Object obj) {
         return this.hashCode() == obj.hashCode();
     }
-    
-    public boolean matches(UserContext userContext){
-        boolean lowerLimitMatch = userContext.getTimeStamp().isAfter(this.startDate);
-        logger.debug("is {} after {}? -> {}", userContext.getTimeStamp(), this.startDate, lowerLimitMatch);
-        
-        boolean upperLimitMatch = userContext.getTimeStamp().isBefore(this.endDate) || userContext.getTimeStamp().equals(this.endDate);
-        logger.debug("is {} before or equal to {}? -> {}", userContext.getTimeStamp(), this.endDate, upperLimitMatch);
-        
-        boolean result = lowerLimitMatch && upperLimitMatch;
-        return result;
+
+    public boolean matches(UserContext userContext) {
+        if (conditions != null) {
+            for (Condition<UserContext> condition : conditions) {
+                if (!condition.matches(userContext))
+                    return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
     }
+    
+    public Collection<Condition<UserContext>> getConditions() {
+        return conditions;
+    }
+
+    public void setConditions(Collection<Condition<UserContext>> conditions) {
+        this.conditions = conditions;
+    }
+
 }
