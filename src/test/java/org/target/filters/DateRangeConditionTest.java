@@ -2,60 +2,64 @@ package org.target.filters;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.target.filters.DateTimeCondition.timeStampAfterOrEqual;
-import static org.target.filters.DateTimeCondition.*;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.target.context.UserContext;
 
-public class DateTimeConditionTest {
+public class DateRangeConditionTest {
 
     @Test
     public void testIsAfterOrEqualWithEqualCondition() {
         DateTime now = new DateTime();
+        DateRangeCondition dtc = new DateRangeCondition().isAfterOrEqual(now);
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now);
-        assertThat(userContext).matches(timeStampAfterOrEqual(now));
+        assertThat(userContext).matches(dtc);
     }
 
     @Test
     public void testIsAfterOrEqualWithAfterCondition() {
         DateTime now = new DateTime();
+        DateRangeCondition dtc = new DateRangeCondition().isAfterOrEqual(now);
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now.plusDays(1));
-        assertThat(userContext).matches(timeStampAfterOrEqual(now));
+        assertThat(userContext).matches(dtc);
     }
     @Test
     public void testIsAfterOrEqualWithBeforeCondition() {
         DateTime now = new DateTime();
+        DateRangeCondition dtc = new DateRangeCondition().isAfterOrEqual(now);
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now.minusDays(1));
-        assertThat(userContext).matches(timeStampAfterOrEqual(now).negate());
+        assertThat(userContext).matches(dtc.negate());
     }
     
     @Test
     public void testIsBeforeWithBeforeCondition() {
         DateTime now = new DateTime();
+        DateRangeCondition dtc = new DateRangeCondition().isBefore(now);
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now.minusDays(1));
-        assertThat(userContext).matches(timeStampBefore(now));
+        assertThat(userContext).matches(dtc);
     }
 
     @Test
     public void testIsBeforeWithAfterCondition() {
         DateTime now = new DateTime();
+        DateRangeCondition dtc = new DateRangeCondition().isBefore(now);
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now.plusDays(1));
-        assertThat(userContext).matches(timeStampBefore(now).negate());
+        assertThat(userContext).matches(dtc.negate());
     }
     
     @Test
     public void testIsBeforeWithEqualCondition() {
         DateTime now = new DateTime();
+        DateRangeCondition dtc = new DateRangeCondition().isBefore(now);
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now);
-        assertThat(userContext).matches(timeStampBefore(now).negate());
+        assertThat(userContext).matches(dtc.negate());
     }
     
     /*
@@ -66,9 +70,10 @@ public class DateTimeConditionTest {
     public void testTimeStampBetweenWithStartDate(){
         DateTime startDate = new DateTime();
         DateTime endDate = startDate.plusWeeks(1);
+        DateRangeCondition dtc = new DateRangeCondition().isBetween(startDate, endDate);
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(startDate);
-        assertThat(userContext).matches(timeStampBetween(startDate, endDate));        
+        assertThat(userContext).matches(dtc);        
     }
 
     /*
@@ -79,9 +84,10 @@ public class DateTimeConditionTest {
     public void testTimeStampBetweenWithBeforeStartDate(){
         DateTime startDate = new DateTime();
         DateTime endDate = startDate.plusWeeks(1);
+        DateRangeCondition dtc = new DateRangeCondition().isBetween(startDate, endDate);
         DateTime dateUnderTest = startDate.minusWeeks(1);
         
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(dateUnderTest);
-        assertThat(userContext).matches(timeStampBetween(startDate, endDate).negate());        
+        assertThat(userContext).matches(dtc.negate());        
     }}

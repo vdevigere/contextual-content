@@ -11,7 +11,7 @@ import org.mockito.internal.util.collections.Sets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.target.context.UserContext;
-import static org.target.filters.DateTimeCondition.*;
+import org.target.filters.DateRangeCondition;
 
 import com.fasterxml.uuid.Generators;
 
@@ -103,11 +103,9 @@ public class CampaignTest {
         Content<String> content1 = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
         Content<String> content2 = new Content<String>("B", "B Content", 0L, "Banner B", 25.0);
         Campaign campaign = new Campaign(1L, "DUMMY", Sets.newSet(content1, content2));
-
-        campaign.setConditions(
-                timeStampAfterOrEqual(now), 
-                timeStampBefore(weekFromNow)
-                );
+        DateRangeCondition range = new DateRangeCondition();
+        
+        campaign.setConditions(range.isAfterOrEqual(now).and(range.isBefore(weekFromNow)));
         UserContext userContext = new UserContext();
         userContext.setTimeStamp(now);
         assertThat(campaign.matchesAll(userContext)).isTrue();
