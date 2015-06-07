@@ -13,8 +13,7 @@ public class DateRangeConditionTest {
     public void testIsAfterOrEqualWithEqualCondition() {
         DateTime now = new DateTime();
         DateRangeCondition dtc = new DateRangeCondition().isAfterOrEqual(now);
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(now);
+        UserContext userContext = new UserContext(now);
         assertThat(userContext).matches(dtc);
     }
 
@@ -22,16 +21,14 @@ public class DateRangeConditionTest {
     public void testIsAfterOrEqualWithAfterCondition() {
         DateTime now = new DateTime();
         DateRangeCondition dtc = new DateRangeCondition().isAfterOrEqual(now);
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(now.plusDays(1));
+        UserContext userContext = new UserContext(now.plusDays(1));
         assertThat(userContext).matches(dtc);
     }
     @Test
     public void testIsAfterOrEqualWithBeforeCondition() {
         DateTime now = new DateTime();
         DateRangeCondition dtc = new DateRangeCondition().isAfterOrEqual(now);
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(now.minusDays(1));
+        UserContext userContext = new UserContext(now.minusDays(1));
         assertThat(userContext).matches(dtc.negate());
     }
     
@@ -39,8 +36,7 @@ public class DateRangeConditionTest {
     public void testIsBeforeWithBeforeCondition() {
         DateTime now = new DateTime();
         DateRangeCondition dtc = new DateRangeCondition().isBefore(now);
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(now.minusDays(1));
+        UserContext userContext = new UserContext(now.minusDays(1));
         assertThat(userContext).matches(dtc);
     }
 
@@ -48,8 +44,7 @@ public class DateRangeConditionTest {
     public void testIsBeforeWithAfterCondition() {
         DateTime now = new DateTime();
         DateRangeCondition dtc = new DateRangeCondition().isBefore(now);
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(now.plusDays(1));
+        UserContext userContext = new UserContext(now.plusDays(1));
         assertThat(userContext).matches(dtc.negate());
     }
     
@@ -57,8 +52,7 @@ public class DateRangeConditionTest {
     public void testIsBeforeWithEqualCondition() {
         DateTime now = new DateTime();
         DateRangeCondition dtc = new DateRangeCondition().isBefore(now);
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(now);
+        UserContext userContext = new UserContext(now);
         assertThat(userContext).matches(dtc.negate());
     }
     
@@ -71,9 +65,8 @@ public class DateRangeConditionTest {
         DateTime startDate = new DateTime();
         DateTime endDate = startDate.plusWeeks(1);
         DateRangeCondition dtc = new DateRangeCondition().isBetween(startDate, endDate);
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(startDate);
-        assertThat(userContext).matches(dtc);        
+        UserContext userContext = new UserContext(startDate);
+        assertThat(userContext).matches(dtc);
     }
 
     /*
@@ -87,7 +80,6 @@ public class DateRangeConditionTest {
         DateRangeCondition dtc = new DateRangeCondition().isBetween(startDate, endDate);
         DateTime dateUnderTest = startDate.minusWeeks(1);
         
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(dateUnderTest);
-        assertThat(userContext).matches(dtc.negate());        
+        UserContext userContext = new UserContext(dateUnderTest);
+        assertThat(userContext).matches(dtc.negate());
     }}

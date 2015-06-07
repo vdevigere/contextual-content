@@ -27,7 +27,7 @@ public class DateRangeCondition implements Predicate<UserContext>{
 
     @Override
     public boolean test(UserContext user) {
-        DateTime userTimeStamp = user.getTimeStamp();
+        DateTime userTimeStamp = user.timeStamp();
         boolean lLimitTest = (startDate==null) ? true : userTimeStamp.isAfter(startDate) || userTimeStamp.isEqual(startDate);
         boolean uLimitTest = (endDate==null) ? true : userTimeStamp.isBefore(endDate);
         return lLimitTest && uLimitTest;

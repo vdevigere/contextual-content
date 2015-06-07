@@ -20,9 +20,10 @@ public class CampaignTest {
 
     private Content<String> contentA;
     private Content<String> contentB;
-
+    private DateTime now;
     @Before
     public void initContent() throws IncorrectWeightException {
+        now = new DateTime();
         this.contentA = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
         this.contentB = new Content<String>("B", "B Content", 0L, "Banner B", 25.0);
     }
@@ -56,7 +57,7 @@ public class CampaignTest {
 
     @Test
     public void testForNullConditions() throws IncorrectWeightException {
-        UserContext userContext = new UserContext();
+        UserContext userContext = new UserContext(now);
         Content<String> content1 = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
         Content<String> content2 = new Content<String>("B", "B Content", 0L, "Banner B", 25.0);
         Campaign campaign = new Campaign(1L, "DUMMY", Sets.newSet(content1, content2));
@@ -65,7 +66,7 @@ public class CampaignTest {
 
     @Test
     public void testForAllOfConditionsMatching() throws IncorrectWeightException {
-        UserContext userContext = new UserContext();
+        UserContext userContext = new UserContext(now);
 
         Content<String> content1 = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
         Content<String> content2 = new Content<String>("B", "B Content", 0L, "Banner B", 25.0);
@@ -77,7 +78,7 @@ public class CampaignTest {
 
     @Test
     public void testForSomeOfConditionsMatching() throws IncorrectWeightException {
-        UserContext userContext = new UserContext();
+        UserContext userContext = new UserContext(now);
 
         Content<String> content1 = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
         Content<String> content2 = new Content<String>("B", "B Content", 0L, "Banner B", 25.0);
@@ -97,7 +98,6 @@ public class CampaignTest {
 
     @Test
     public void testMatchEqualToStartDate() throws IncorrectWeightException {
-        DateTime now = new DateTime();
         DateTime weekFromNow = new DateTime().plusWeeks(1);
 
         Content<String> content1 = new Content<String>("A", "A Content", 0L, "Banner A", 75.0);
@@ -106,8 +106,7 @@ public class CampaignTest {
         DateRangeCondition range = new DateRangeCondition();
         
         campaign.setConditions(range.isAfterOrEqual(now).and(range.isBefore(weekFromNow)));
-        UserContext userContext = new UserContext();
-        userContext.setTimeStamp(now);
+        UserContext userContext = new UserContext(now);
         assertThat(campaign.matchesAll(userContext)).isTrue();
     }
 }
