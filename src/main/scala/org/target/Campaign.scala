@@ -16,7 +16,7 @@ case class Campaign(id: Long, name: String, contentSet: Set[Content[_]]) {
   val hasher = Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8).putLong(id)
   val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
   var total = 0.00
-  
+
   contentSet.foreach(content => {
     total += content.weight
     treeMap.put(total, content)

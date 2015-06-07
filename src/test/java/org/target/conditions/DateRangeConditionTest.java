@@ -23,6 +23,7 @@ public class DateRangeConditionTest {
         UserContext userContext = new UserContext(now.plusDays(1));
         assertThat(userContext).matches(isAfterOrEqual(now));
     }
+
     @Test
     public void testIsAfterOrEqualWithBeforeCondition() {
         DateTime now = new DateTime();
