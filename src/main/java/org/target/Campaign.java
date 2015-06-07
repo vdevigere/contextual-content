@@ -45,7 +45,7 @@ public class Campaign {
         Hasher hasher = hf.newHasher().putString(this.name, Charsets.UTF_8).putLong(this.id);
 
         contentSet.forEach(content -> {
-            this.total += content.getWeight();
+            this.total += content.weight();
             this.map.put(total, content);
             hasher.putInt(content.hashCode());
         });

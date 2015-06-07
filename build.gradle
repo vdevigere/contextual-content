@@ -1,8 +1,13 @@
-apply plugin: 'java'
+apply plugin: 'scala'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 sourceCompatibility = 1.8
 version = '1.0'
+sourceSets.main.scala.srcDir "src/main/java"
+sourceSets.main.java.srcDirs = []
+sourceSets.test.scala.srcDir "src/test/java"
+sourceSets.test.java.srcDirs = []
 jar {
     manifest {
         attributes 'Implementation-Title': 'Gradle Quickstart',
@@ -15,6 +20,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.scala-lang:scala-library:2.11.6'
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
     compile 'com.fasterxml.uuid:java-uuid-generator:3.1.4'
 	compile 'com.google.guava:guava:18.0'    
