@@ -13,9 +13,11 @@ import org.uncommons.maths.random.XORShiftRNG
  * Created by Viddu on 6/7/2015.
  */
 case class Campaign(id: Long, name: String, contentSet: Set[Content[_]]) {
-  val hasher = Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8).putLong(id)
-  val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
-  var total = 0.00
+  private val hasher = Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8).putLong(id)
+  private val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
+  private var total = 0.00
+
+  var condition: Predicate[UserContext] = new Predicate[UserContext](x => true)
 
   contentSet.foreach(content => {
     total += content.weight
