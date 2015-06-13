@@ -1,11 +1,9 @@
 package org.target
 
 import com.fasterxml.uuid.Generators
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions._
 import org.joda.time.DateTime
 import org.junit.{Before, Test}
-import org.target.condition.UserTimeStamp
-import org.target.context.UserContext
 
 class CampaignTest {
 
