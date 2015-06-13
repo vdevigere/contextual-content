@@ -22,10 +22,10 @@ object StartServer extends App {
 
   val manager = Servlets.defaultContainer().addDeployment(servletBuilder)
   manager.deploy()
-  val path = Handlers.path().addPrefixPath("/context", manager.start())
+
   val server = Undertow.builder()
     .addHttpListener(9001, "0.0.0.0")
-    .setHandler(path)
+    .setHandler(Handlers.path().addPrefixPath("/context", manager.start()))
     .build()
   server.start()
 }
