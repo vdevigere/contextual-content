@@ -14,14 +14,13 @@ case class Content[T](name: String,
                       content: T,
                       weight: Double
                        ) {
-  if (weight <= 0)
-    throw new IncorrectWeightException(weight);
+  require(weight > 0)
 
   override def hashCode = {
     Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8)
       .putString(description, Charsets.UTF_8)
       .putLong(contentId)
       .putDouble(weight)
-      .putInt(content.hashCode()).hash().asInt();
+      .putInt(content.hashCode()).hash().asInt()
   }
 }
