@@ -9,8 +9,7 @@ import collection.JavaConversions._
  * Created by Viddu on 6/13/2015.
  */
 object CampaignDb {
-  private val cacheManager: EmbeddedCacheManager = new DefaultCacheManager("my-config-file.xml")
-  private val cache: Cache[Long, Campaign] = cacheManager.getCache()
+  private val cache: Cache[Long, Campaign] = new DefaultCacheManager().getCache()
 
   def create(campaign: Campaign): Long = {
     cache.put(campaign.id, campaign)
