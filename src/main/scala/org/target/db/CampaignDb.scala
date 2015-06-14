@@ -1,6 +1,8 @@
 package org.target.db
 
 import org.infinispan.Cache
+import org.infinispan.configuration.cache.ConfigurationBuilder
+import org.infinispan.eviction.EvictionStrategy._
 import org.infinispan.manager.{DefaultCacheManager, EmbeddedCacheManager}
 import org.target.Campaign
 import collection.JavaConversions._
@@ -9,7 +11,9 @@ import collection.JavaConversions._
  * Created by Viddu on 6/13/2015.
  */
 object CampaignDb {
-  private val cache: Cache[Long, Campaign] = new DefaultCacheManager().getCache()
+  val manager = new DefaultCacheManager()
+  manager.defineConfiguration("campaign-cache", new ConfigurationBuilder().build())
+  private val cache = manager.getCache[Long, Campaign]("campaign-cache")
 
   def create(campaign: Campaign): Long = {
     cache.put(campaign.id, campaign)

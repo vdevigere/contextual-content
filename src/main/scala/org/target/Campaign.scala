@@ -14,9 +14,9 @@ import sun.nio.cs.Surrogate.Generator
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign(id: Long, name: String, contentSet: Set[Content[_]]) {
+case class Campaign(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[_]]) {
 
-  def this(name: String, contentSet: Set[Content[_]]) = this(Campaign.generator.generate().getMostSignificantBits, name, contentSet)
+  def this(name: String, contentSet: scala.collection.immutable.Set[Content[_]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
 
   private val hasher = Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8).putLong(id)
   private val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
@@ -47,8 +47,4 @@ case class Campaign(id: Long, name: String, contentSet: Set[Content[_]]) {
     val value = new XORShiftRNG(seed).nextDouble() * total
     treeMap.ceilingEntry(value).getValue
   }
-}
-
-object Campaign {
-  val generator = Generators.timeBasedGenerator()
 }

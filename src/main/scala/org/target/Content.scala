@@ -14,6 +14,11 @@ case class Content[T](name: String,
                       content: T,
                       weight: Double
                        ) {
+  def this(name: String,
+           description: String,
+           content: T,
+           weight: Double) = this(name, description, UUIDGenarator.generate.getMostSignificantBits, content, weight)
+
   require(weight > 0)
 
   override def hashCode = {
