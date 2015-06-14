@@ -1,29 +1,24 @@
 package org.target.servlet
 
+import org.infinispan.Cache
+import org.infinispan.factories.annotations.Inject
 import org.scalatra.ScalatraServlet
+import org.target.db.CampaignDb
 
 class CampaignServlet extends ScalatraServlet {
 
   get("/campaigns") {
-    <html>
-      <body>
-        <h1>Hello, Viddu!</h1>
-        Say
-        <a href="hello-scalate">hello to Scalate</a>
-        .
-      </body>
-    </html>
+    CampaignDb.readAll()
   }
 
   post("/campaigns") {
-    "creating a campaign"
   }
 
   get("/campaigns/:id") {
-    "fetching campaign:"+params("id")
+    CampaignDb.read(params("id").toLong)
   }
 
   put("/campaigns/:id") {
-    "updating campaign:"+params("id")
+    "updating campaign:" + params("id")
   }
 }
