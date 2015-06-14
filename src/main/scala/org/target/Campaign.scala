@@ -4,15 +4,20 @@ import java.nio.ByteBuffer
 import java.util
 import java.util.UUID
 
+import com.fasterxml.uuid.Generators
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import org.target.context.UserContext
 import org.uncommons.maths.random.XORShiftRNG
+import sun.nio.cs.Surrogate.Generator
 
 /**
  * Created by Viddu on 6/7/2015.
  */
 case class Campaign(id: Long, name: String, contentSet: Set[Content[_]]) {
+
+  def this(name: String, contentSet: Set[Content[_]]) = this(Campaign.generator.generate().getMostSignificantBits, name, contentSet)
+
   private val hasher = Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8).putLong(id)
   private val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
   private var total = 0.00
@@ -42,4 +47,8 @@ case class Campaign(id: Long, name: String, contentSet: Set[Content[_]]) {
     val value = new XORShiftRNG(seed).nextDouble() * total
     treeMap.ceilingEntry(value).getValue
   }
+}
+
+object Campaign {
+  val generator = Generators.timeBasedGenerator()
 }

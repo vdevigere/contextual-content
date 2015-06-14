@@ -41,4 +41,13 @@ class CampaignTest {
     val campaign2 = new Campaign(1L, "DUMMY", Array(contentA, contentB).toSet)
     assertThat(campaign1).isEqualTo(campaign2)
   }
+
+  @Test
+  def testUUID(): Unit ={
+    val content1 = new Content("A", "A Content", 0L, "Banner A", 75.0)
+    val content2 = new Content("B", "B Content", 0L, "Banner B", 25.0)
+    val campaign1 = new Campaign("DUMMY", Array(content1, content2).toSet)
+    val campaign2 = new Campaign("FOO", Array(content1, content2).toSet)
+    assertThat(campaign1.id).isNotEqualTo(campaign2.id)
+  }
 }
