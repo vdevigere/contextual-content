@@ -1,7 +1,7 @@
 package org.target.db
 
 import org.infinispan.Cache
-import org.infinispan.configuration.cache.ConfigurationBuilder
+import org.infinispan.configuration.cache.{Configuration, ConfigurationBuilder}
 import org.infinispan.eviction.EvictionStrategy._
 import org.infinispan.manager.{DefaultCacheManager, EmbeddedCacheManager}
 import org.target.Campaign
@@ -12,7 +12,8 @@ import collection.JavaConversions._
  */
 object CampaignDb {
   val manager = new DefaultCacheManager()
-  manager.defineConfiguration("campaign-cache", new ConfigurationBuilder().build())
+  val configuration = new ConfigurationBuilder().persistence().passivation(false).addStore(classOf[RedisStoreConfigurationBuilder]).host("localhost").port(6379).build()
+  manager.defineConfiguration("campaign-cache", configuration)
   private val cache = manager.getCache[Long, Campaign]("campaign-cache")
 
   def create(campaign: Campaign): Long = {
@@ -29,7 +30,7 @@ object CampaignDb {
   }
 
   def read(id: Long): Campaign = {
-    cache.get(id)
+   cache.get(id)
   }
 
   def readAll(): collection.mutable.Set[Campaign] = {

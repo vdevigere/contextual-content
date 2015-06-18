@@ -18,7 +18,6 @@ case class Campaign(id: Long, name: String, contentSet: scala.collection.immutab
 
   def this(name: String, contentSet: scala.collection.immutable.Set[Content[_]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
 
-  private val hasher = Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8).putLong(id)
   private val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
   private var total = 0.00
 
@@ -27,14 +26,17 @@ case class Campaign(id: Long, name: String, contentSet: scala.collection.immutab
   contentSet.foreach(content => {
     total += content.weight
     treeMap.put(total, content)
-    hasher.putInt(content.hashCode)
   })
-  val hash = hasher.hash()
 
   override def hashCode: Int = {
     hash.asInt()
   }
 
+  private def hash = {
+    val hasher = Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8).putLong(id)
+    contentSet.foreach(content => hasher.putInt(content.hashCode))
+    hasher.hash()
+  }
   def resolveContent(uuid: UUID): Content[_] = {
     val bb = ByteBuffer.wrap(new Array[Byte](20))
     bb.putLong(uuid.getMostSignificantBits)
