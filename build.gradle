@@ -11,6 +11,7 @@ jar {
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -29,6 +30,7 @@ dependencies {
     compile 'org.infinispan:infinispan-embedded:7.2.2.Final'
     compile 'redis.clients:jedis:2.7.2'
     compile 'net.jcip:jcip-annotations:1.0'
+    compile 'com.viddu.infinispan.redis:infinispan-cachestore-redis:1.0'
     testCompile 'org.assertj:assertj-core:3.0.0'
 	testCompile 'org.mockito:mockito-all:1.10.19'
     testCompile group: 'junit', name: 'junit', version: '4.+'
