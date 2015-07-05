@@ -18,16 +18,17 @@ import sun.nio.cs.Surrogate.Generator
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query) {
-  var condition: Predicate[UserContext] = new Predicate[UserContext](x => x.memoryIndex.search(query) > 0.0f)
+case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) {
+  //  val query: Query = Campaign.queryParser.parse(queryString)
+  val condition: Predicate[UserContext] = new Predicate[UserContext](x => x.memoryIndex.search(Campaign.queryParser.parse(queryString)) > 0.0f)
 
-  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(id, name, contentSet, Campaign.queryParser.parse(queryString))
+  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query) = this(id, name, contentSet, query.toString)
 
   def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(id, name, contentSet, new MatchAllDocsQuery)
 
-  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
-
   def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet, queryString)
+
+  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
 
 
   private val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
