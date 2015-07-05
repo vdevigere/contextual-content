@@ -7,21 +7,32 @@ import java.util.UUID
 import com.fasterxml.uuid.Generators
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
+import org.apache.lucene.analysis.standard.StandardAnalyzer
+import org.apache.lucene.queryparser.classic.QueryParser
+import org.apache.lucene.search.{MatchAllDocsQuery, Query}
 import org.target.context.UserContext
 import org.uncommons.maths.random.XORShiftRNG
+import rl.QueryString
 import sun.nio.cs.Surrogate.Generator
 
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[_]]) {
+case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query) {
+  var condition: Predicate[UserContext] = new Predicate[UserContext](x => x.memoryIndex.search(query) > 0.0f)
 
-  def this(name: String, contentSet: scala.collection.immutable.Set[Content[_]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
+  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(id, name, contentSet, Campaign.queryParser.parse(queryString))
+
+  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(id, name, contentSet, new MatchAllDocsQuery)
+
+  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
+
+  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet, queryString)
+
 
   private val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
   private var total = 0.00
 
-  var condition: Predicate[UserContext] = new Predicate[UserContext](x => true)
 
   contentSet.foreach(content => {
     total += content.weight
@@ -37,6 +48,7 @@ case class Campaign(id: Long, name: String, contentSet: scala.collection.immutab
     contentSet.foreach(content => hasher.putInt(content.hashCode))
     hasher.hash()
   }
+
   def resolveContent(uuid: UUID): Content[_] = {
     val bb = ByteBuffer.wrap(new Array[Byte](20))
     bb.putLong(uuid.getMostSignificantBits)
@@ -49,4 +61,9 @@ case class Campaign(id: Long, name: String, contentSet: scala.collection.immutab
     val value = new XORShiftRNG(seed).nextDouble() * total
     treeMap.ceilingEntry(value).getValue
   }
+}
+
+object Campaign {
+  private val defaultField: String = "timeStamp"
+  val queryParser = new QueryParser(defaultField, new StandardAnalyzer())
 }

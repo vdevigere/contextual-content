@@ -17,14 +17,14 @@ object CampaignDb {
   val configuration = new ConfigurationBuilder().persistence().passivation(false).addStore(classOf[RedisStoreConfigurationBuilder])
     .url(new URI("redis://localhost:6379/0")).build()
   manager.defineConfiguration("campaign-cache", configuration)
-  private val cache = manager.getCache[Long, Campaign]("campaign-cache")
+  private val cache = manager.getCache[Long, Campaign[_]]("campaign-cache")
 
-  def create(campaign: Campaign): Long = {
+  def create(campaign: Campaign[_]): Long = {
     cache.put(campaign.id, campaign)
     campaign.id
   }
 
-  def update(campaign: Campaign) = {
+  def update(campaign: Campaign[_]) = {
     cache.replace(campaign.id, campaign)
   }
 
@@ -32,12 +32,12 @@ object CampaignDb {
     cache.remove(id)
   }
 
-  def read(id: Long): Campaign = {
-   cache.get(id)
+  def read(id: Long): Campaign[_] = {
+    cache.get(id)
   }
 
-  def readAll(): collection.mutable.Set[Campaign] = {
-    val keys: scala.collection.mutable.Set[Long] = cache.keySet
+  def readAll(): collection.mutable.Set[Campaign[_]] = {
+    val keys: collection.mutable.Set[Long] = cache.keySet
     keys.map(key => cache.get(key))
   }
 }
