@@ -1,9 +1,15 @@
 package org.target.servlet
 
-import org.scalatra.ScalatraServlet
+import java.util.UUID
+import javax.servlet.http.HttpServletRequest
+
+import com.fasterxml.uuid.Generators
+import org.joda.time.DateTime
+import org.scalatra.{Cookie, ScalatraServlet}
 import org.slf4j.LoggerFactory
-import org.target.{Campaign, Content}
+import org.target.context.UserContext
 import org.target.db.CampaignDb
+import org.target.{Campaign, Content}
 
 class CampaignServlet extends ScalatraServlet {
   val logger = LoggerFactory.getLogger(classOf[CampaignServlet])
@@ -56,5 +62,29 @@ class CampaignServlet extends ScalatraServlet {
 
   delete("/campaigns/:id") {
     CampaignDb.delete(params("id").toLong)
+  }
+
+  def resetSeedCookie(uuid: UUID) = {
+    response.addCookie(new Cookie("SEED", uuid.toString))
+  }
+
+  def getSeedCookie(request: HttpServletRequest): UUID = {
+    if (request.cookies.contains("SEED"))
+      UUID.fromString(request.cookies("SEED"))
+    else
+      Generators.randomBasedGenerator().generate()
+  }
+
+  get("/campaigns/:id/content/random") {
+    val seedUUID = getSeedCookie(request)
+    resetSeedCookie(seedUUID)
+    CampaignDb.read(params("id").toLong).resolveContent(seedUUID)
+  }
+
+  get("/campaigns/content/random") {
+    val seedUUID = getSeedCookie(request)
+    resetSeedCookie(seedUUID)
+    val userContext = new UserContext(new DateTime)
+    CampaignDb.readAll().filter(_.condition(userContext)).map(_.resolveContent(seedUUID))
   }
 }
