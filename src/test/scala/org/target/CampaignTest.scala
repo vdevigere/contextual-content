@@ -83,4 +83,15 @@ class CampaignTest {
     val user = new UserContext(userDate)
     assertThat(campaign.condition(user)).isFalse
   }
+
+  @Test
+  def testNoCondition(): Unit ={
+    val content1 = new Content("A", "A Content", 0L, "Banner A", 75.0)
+    val content2 = new Content("B", "B Content", 0L, "Banner B", 25.0)
+    val campaign = new Campaign("DUMMY", Array(content1, content2).toSet)
+    val userDate = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20160101")
+    val user = new UserContext(userDate)
+    assertThat(campaign.condition(user)).isTrue
+
+  }
 }

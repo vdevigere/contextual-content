@@ -4,7 +4,6 @@ import java.nio.ByteBuffer
 import java.util
 import java.util.UUID
 
-import com.fasterxml.uuid.Generators
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import org.apache.lucene.analysis.standard.StandardAnalyzer
@@ -12,15 +11,19 @@ import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{MatchAllDocsQuery, Query}
 import org.target.context.UserContext
 import org.uncommons.maths.random.XORShiftRNG
-import rl.QueryString
-import sun.nio.cs.Surrogate.Generator
 
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) {
-  //  val query: Query = Campaign.queryParser.parse(queryString)
-  val condition: Predicate[UserContext] = new Predicate[UserContext](x => x.memoryIndex.search(Campaign.queryParser.parse(queryString)) > 0.0f)
+case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) extends Serializable {
+  @transient var query: Query = Campaign.queryParser.parse(queryString)
+
+  private def readObject(in: java.io.ObjectInputStream) = {
+    in.defaultReadObject()
+    query = Campaign.queryParser.parse(queryString)
+  }
+
+  val condition: Predicate[UserContext] = new Predicate[UserContext](x => x.memoryIndex.search(query) > 0.0f)
 
   def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query) = this(id, name, contentSet, query.toString)
 
