@@ -23,7 +23,9 @@ case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collecti
     query = Campaign.queryParser.parse(queryString)
   }
 
-  val condition: Predicate[UserContext] = new Predicate[UserContext](x => x.memoryIndex.search(query) > 0.0f)
+  def condition(x: UserContext): Boolean = {
+    x.memoryIndex.search(query) > 0.0f
+  }
 
   def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query) = this(id, name, contentSet, query.toString)
 
