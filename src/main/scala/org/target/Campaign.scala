@@ -15,8 +15,17 @@ import org.uncommons.maths.random.XORShiftRNG
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) extends Serializable {
-  @transient var query: Query = Campaign.queryParser.parse(queryString)
+case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], @transient private var query: Query) extends Serializable {
+  val queryString = query.toString
+
+  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(id, name, contentSet, Campaign.queryParser.parse(queryString))
+
+  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet, queryString)
+
+  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(id, name, contentSet, new MatchAllDocsQuery)
+
+  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
+
 
   private def readObject(in: java.io.ObjectInputStream) = {
     in.defaultReadObject()
@@ -26,15 +35,6 @@ case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collecti
   def condition(x: UserContext): Boolean = {
     x.memoryIndex.search(query) > 0.0f
   }
-
-  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query) = this(id, name, contentSet, query.toString)
-
-  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(id, name, contentSet, new MatchAllDocsQuery)
-
-  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet, queryString)
-
-  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
-
 
   private val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
   private var total = 0.00

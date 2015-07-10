@@ -1,5 +1,7 @@
 package org.target
 
+import java.io.{ByteArrayInputStream, ObjectInputStream, ObjectOutputStream, ByteArrayOutputStream}
+
 import org.joda.time.format.DateTimeFormat
 import org.target.context.UserContext
 
@@ -40,5 +42,33 @@ class CampaignTest extends UnitSpec {
     val userDate = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20160701")
     val user = new UserContext(userDate)
     campaign.condition(user) shouldBe true
+  }
+
+  "Campaign with no query string" should "be serialzable" in new ContentFixture {
+    // Serialize
+    val bufout = new ByteArrayOutputStream()
+    val obout = new ObjectOutputStream(bufout)
+    obout.writeObject(campaign)
+
+    //De-Serialize
+    val bufin = new ByteArrayInputStream(bufout.toByteArray)
+    val obin = new ObjectInputStream(bufin)
+    val deSerializedCampaign = obin.readObject().asInstanceOf[Campaign[String]]
+
+    deSerializedCampaign should equal(campaign)
+  }
+
+  "Campaign with query string" should "be serializable" in new ContentFixture {
+    val campaign20140101_20150101 = new Campaign("DUMMY", Array(contentA, contentB).toSet, "timeStamp:[20140101 TO  20150101]")
+    val bufout = new ByteArrayOutputStream()
+    val obout = new ObjectOutputStream(bufout)
+    obout.writeObject(campaign20140101_20150101)
+
+    //De-Serialize
+    val bufin = new ByteArrayInputStream(bufout.toByteArray)
+    val obin = new ObjectInputStream(bufin)
+    val deSerializedCampaign = obin.readObject().asInstanceOf[Campaign[String]]
+
+    deSerializedCampaign should equal(campaign20140101_20150101)
   }
 }
