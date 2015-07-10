@@ -1,21 +1,18 @@
 package org.target
 
-import org.hamcrest.CoreMatchers._
-import org.hamcrest.MatcherAssert._
-import org.junit.Test
-
 /**
  * Created by Viddu on 6/7/2015.
  */
-class ContentTest {
-  @Test(expected = classOf[IllegalArgumentException])
-  def testContentCreationWithIncorrectWeight(): Unit = {
-    new Content[String]("A", "A Content", 0L, "Banner A", 0.0)
+class ContentTest extends UnitSpec {
+  "Creating content with weight less than 0" should "throw an IllegalArgumentException" in {
+    intercept[IllegalArgumentException] {
+      new Content[String]("A", "A Content", 0L, "Banner A", 0.0)
+    }
   }
 
-  def testContentEquality {
-    val A: Content[String] = new Content[String]("A", "A Content", 0L, "Banner A", 0.0)
-    val B: Content[String] = new Content[String]("A", "A Content", 0L, "Banner A", 0.0)
-    assertThat(A, equalTo(B))
+  "Content with same values" should "have the same hash and thus be equal." in {
+    val A: Content[String] = new Content[String]("A", "A Content", 0L, "Banner A", 90.0)
+    val B: Content[String] = new Content[String]("A", "A Content", 0L, "Banner A", 90.0)
+    A should equal(B)
   }
 }
