@@ -1,4 +1,6 @@
-package org.target
+package org.target.core
+
+import org.target.UnitSpec
 
 /**
  * Created by Viddu on 6/7/2015.

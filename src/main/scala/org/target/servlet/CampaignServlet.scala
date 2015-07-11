@@ -8,8 +8,8 @@ import org.joda.time.DateTime
 import org.scalatra.{Cookie, ScalatraServlet}
 import org.slf4j.LoggerFactory
 import org.target.context.UserContext
+import org.target.core.{Campaign, Content}
 import org.target.db.CampaignDb
-import org.target.{Campaign, Content}
 
 class CampaignServlet(campaignDb: CampaignDb) extends ScalatraServlet {
   val logger = LoggerFactory.getLogger(classOf[CampaignServlet])

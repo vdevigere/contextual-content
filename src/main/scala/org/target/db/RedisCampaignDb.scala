@@ -5,7 +5,7 @@ import java.net.URI
 import com.viddu.infinispan.redis.configuration.RedisStoreConfigurationBuilder
 import org.infinispan.configuration.cache.ConfigurationBuilder
 import org.infinispan.manager.DefaultCacheManager
-import org.target.Campaign
+import org.target.core.Campaign
 
 /**
  * Created by Viddu on 7/10/2015.

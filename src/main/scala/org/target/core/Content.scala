@@ -1,9 +1,8 @@
-package org.target
+package org.target.core
 
 import com.google.common.base.Charsets
-import com.google.common.hash.HashFunction
-import com.google.common.hash.Hasher
 import com.google.common.hash.Hashing
+import org.target.UUIDGenarator
 
 /**
  * Created by Viddu on 6/6/2015.

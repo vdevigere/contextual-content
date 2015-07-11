@@ -1,8 +1,9 @@
-package org.target
+package org.target.core
 
-import java.io.{ByteArrayInputStream, ObjectInputStream, ObjectOutputStream, ByteArrayOutputStream}
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 
 import org.joda.time.format.DateTimeFormat
+import org.target.UnitSpec
 import org.target.context.UserContext
 
 /**

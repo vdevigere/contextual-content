@@ -1,7 +1,7 @@
 package org.target.db
 
 import org.infinispan.Cache
-import org.target.Campaign
+import org.target.core.Campaign
 
 import scala.collection.JavaConversions._
 

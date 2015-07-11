@@ -1,4 +1,4 @@
-package org.target
+package org.target.core
 
 /**
  * Created by Viddu on 7/10/2015.

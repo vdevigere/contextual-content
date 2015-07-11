@@ -1,4 +1,4 @@
-package org.target
+package org.target.core
 
 import java.nio.ByteBuffer
 import java.util
@@ -9,6 +9,7 @@ import com.google.common.hash.Hashing
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.{MatchAllDocsQuery, Query}
+import org.target.UUIDGenarator
 import org.target.context.UserContext
 import org.uncommons.maths.random.XORShiftRNG
 
