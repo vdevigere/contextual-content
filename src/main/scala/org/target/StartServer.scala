@@ -1,11 +1,11 @@
 package org.target
 
 import io.undertow.servlet.Servlets
-import io.undertow.servlet.api.{InstanceHandle, InstanceFactory}
 import io.undertow.{Handlers, Undertow}
 import org.slf4j.LoggerFactory
 import org.target.db.RedisCampaignDb
 import org.target.servlet.CampaignServlet
+import org.target.utils.ImplicitConversions._
 
 /**
  * Created by Viddu on 6/12/2015.
@@ -18,17 +18,7 @@ object StartServer extends App {
     .setContextPath("/context")
     .setDeploymentName("context.war")
     .addServlets(
-      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], new InstanceFactory[CampaignServlet] {
-        override def createInstance(): InstanceHandle[CampaignServlet] = {
-          new InstanceHandle[CampaignServlet] {
-            override def getInstance(): CampaignServlet = {
-              logger.debug("Creating instance of CampaignServlet");
-              new CampaignServlet(new RedisCampaignDb)
-            }
-            override def release(): Unit = {}
-          }
-        }
-      }).addMapping("/*")
+      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], () => new CampaignServlet(new RedisCampaignDb)).addMapping("/*")
     )
   val manager = Servlets.defaultContainer().addDeployment(servletBuilder)
   manager.deploy()
