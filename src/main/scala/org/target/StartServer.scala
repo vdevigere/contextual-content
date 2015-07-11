@@ -18,7 +18,7 @@ object StartServer extends App {
     .setContextPath("/context")
     .setDeploymentName("context.war")
     .addServlets(
-      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], () => new CampaignServlet(new RedisCampaignDb)).addMapping("/*")
+      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], new CampaignServlet(new RedisCampaignDb)).addMapping("/*")
     )
   val manager = Servlets.defaultContainer().addDeployment(servletBuilder)
   manager.deploy()
