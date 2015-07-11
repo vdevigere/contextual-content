@@ -11,11 +11,11 @@ import org.target.context.UserContext
 import org.target.db.CampaignDb
 import org.target.{Campaign, Content}
 
-class CampaignServlet extends ScalatraServlet {
+class CampaignServlet(campaignDb: CampaignDb) extends ScalatraServlet {
   val logger = LoggerFactory.getLogger(classOf[CampaignServlet])
 
   get("/campaigns") {
-    CampaignDb.readAll()
+    campaignDb.readAll()
   }
 
   post("/campaigns") {
@@ -33,12 +33,12 @@ class CampaignServlet extends ScalatraServlet {
 
     val contentList = for (index <- 0 to names.length - 1) yield new Content[String](names(index), descriptions(index), contents(index), weights(index).toDouble)
     val campaign = new Campaign(campaignName, contentList.toSet, queryString)
-    CampaignDb.create(campaign)
+    campaignDb.create(campaign)
     campaign.id
   }
 
   get("/campaigns/:id") {
-    CampaignDb.read(params("id").toLong)
+    campaignDb.read(params("id").toLong)
   }
 
   put("/campaigns/:id") {
@@ -56,12 +56,12 @@ class CampaignServlet extends ScalatraServlet {
 
     val contentList = for (index <- 0 to names.length - 1) yield new Content[String](names(index), descriptions(index), contents(index), weights(index).toDouble)
     val campaign = new Campaign(params("id").toLong, campaignName, contentList.toSet, queryString)
-    CampaignDb.update(campaign)
+    campaignDb.update(campaign)
     campaign.id
   }
 
   delete("/campaigns/:id") {
-    CampaignDb.delete(params("id").toLong)
+    campaignDb.delete(params("id").toLong)
   }
 
   def resetSeedCookie(uuid: UUID) = {
@@ -78,13 +78,13 @@ class CampaignServlet extends ScalatraServlet {
   get("/campaigns/:id/content/random") {
     val seedUUID = getSeedCookie(request)
     resetSeedCookie(seedUUID)
-    CampaignDb.read(params("id").toLong).resolveContent(seedUUID)
+    campaignDb.read(params("id").toLong).resolveContent(seedUUID)
   }
 
   get("/campaigns/content/random") {
     val seedUUID = getSeedCookie(request)
     resetSeedCookie(seedUUID)
     val userContext = new UserContext(new DateTime)
-    CampaignDb.readAll().filter(_.condition(userContext)).map(_.resolveContent(seedUUID))
+    campaignDb.readAll().filter(_.condition(userContext)).map(_.resolveContent(seedUUID))
   }
 }
