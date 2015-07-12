@@ -3,15 +3,30 @@ package org.target.servlet
 import java.util.UUID
 import javax.servlet.http.HttpServletRequest
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.uuid.Generators
 import org.joda.time.DateTime
-import org.scalatra.{Cookie, ScalatraServlet}
+import org.scalatra._
 import org.slf4j.LoggerFactory
 import org.target.context.UserContext
 import org.target.core.{Campaign, Content}
 import org.target.db.CampaignDb
 
 class CampaignServlet(campaignDb: CampaignDb) extends ScalatraServlet {
+
+  import CampaignServlet._
+
+  before() {
+    contentType = "application/json"
+  }
+
+  override protected def renderPipeline: RenderPipeline = renderToJson orElse super.renderPipeline
+
+  def renderToJson: RenderPipeline = {
+    case a: Any => mapper.writeValue(response.getWriter, a)
+  }
+
   val logger = LoggerFactory.getLogger(classOf[CampaignServlet])
 
   get("/campaigns") {
@@ -87,4 +102,9 @@ class CampaignServlet(campaignDb: CampaignDb) extends ScalatraServlet {
     val userContext = new UserContext(new DateTime)
     campaignDb.readAll().filter(_.condition(userContext)).map(_.resolveContent(seedUUID))
   }
+}
+
+object CampaignServlet {
+  val mapper = new ObjectMapper()
+  mapper.registerModule(DefaultScalaModule)
 }
