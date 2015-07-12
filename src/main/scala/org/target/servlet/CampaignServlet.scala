@@ -15,7 +15,7 @@ import org.target.db.CampaignDb
 
 class CampaignServlet(campaignDb: CampaignDb) extends ScalatraServlet {
 
-  import CampaignServlet._
+  import org.target.servlet.CampaignServlet._
 
   before() {
     contentType = "application/json"
@@ -35,16 +35,15 @@ class CampaignServlet(campaignDb: CampaignDb) extends ScalatraServlet {
 
   post("/campaigns") {
     val campaignName = params("campaignName")
-    val queryString = params("queryString")
     val names = multiParams("name")
     val descriptions = multiParams("description")
     val contents = multiParams("content")
     val weights = multiParams("weight")
+    val queryString = params.getOrElse("queryString", "*:*")
     logger.debug("Campaign Name: {}", campaignName)
     logger.debug("Content Name: {}", names)
     logger.debug("Content Desc: {}", descriptions)
     logger.debug("Weight: {}", weights)
-    logger.debug("Condition:{}", queryString)
 
     val contentList = for (index <- 0 to names.length - 1) yield new Content[String](names(index), descriptions(index), contents(index), weights(index).toDouble)
     val campaign = new Campaign(campaignName, contentList.toSet, queryString)
