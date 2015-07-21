@@ -16,10 +16,10 @@ import org.uncommons.maths.random.XORShiftRNG
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], @transient private var query: Query) extends Serializable {
-  val queryString = query.toString
+case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) extends Serializable {
+  @transient private var query: Query = Campaign.queryParser.parse(queryString)
 
-  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(id, name, contentSet, Campaign.queryParser.parse(queryString))
+  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query) = this(id, name, contentSet, query.toString)
 
   def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet, queryString)
 
