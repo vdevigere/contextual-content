@@ -8,7 +8,7 @@ import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.queryparser.classic.QueryParser
-import org.apache.lucene.search.{MatchAllDocsQuery, Query}
+import org.apache.lucene.search.Query
 import org.target.UUIDGenarator
 import org.target.context.UserContext
 import org.uncommons.maths.random.XORShiftRNG
@@ -16,17 +16,10 @@ import org.uncommons.maths.random.XORShiftRNG
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign[T <: Any](id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) extends Serializable {
+case class Campaign[T <: Any](name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String = "*:*", id: Long = UUIDGenarator.generate.getMostSignificantBits) extends Serializable {
   @transient private var query: Query = Campaign.queryParser.parse(queryString)
 
-  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query) = this(id, name, contentSet, query.toString)
-
-  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet, queryString)
-
-  def this(id: Long, name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(id, name, contentSet, new MatchAllDocsQuery)
-
-  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]]) = this(UUIDGenarator.generate.getMostSignificantBits, name, contentSet)
-
+  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query, id: Long) = this(name, contentSet, query.toString, id)
 
   private def readObject(in: java.io.ObjectInputStream) = {
     in.defaultReadObject()

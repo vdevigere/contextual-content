@@ -69,7 +69,7 @@ class CampaignServlet(campaignDb: CampaignDb) extends ScalatraServlet {
     logger.debug("QueryString: {}", queryString)
 
     val contentList = for (index <- 0 to names.length - 1) yield new Content[String](names(index), descriptions(index), contents(index), weights(index).toDouble)
-    val campaign = new Campaign(params("id").toLong, campaignName, contentList.toSet, queryString)
+    val campaign = new Campaign(campaignName, contentList.toSet, queryString, params("id").toLong)
     campaignDb.update(campaign)
     campaign.id
   }
