@@ -16,10 +16,10 @@ import org.uncommons.maths.random.XORShiftRNG
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign[T <: Any](name: String, contentSet: scala.collection.immutable.Set[Content[T]], queryString: String = "*:*", id: Long = UUIDGenarator.generate.getMostSignificantBits) extends Serializable {
+case class Campaign(name: String, contentSet: scala.collection.immutable.Set[Content], queryString: String = "*:*", id: Long = UUIDGenarator.generate.getMostSignificantBits) extends Serializable {
   @transient private var query: Query = Campaign.queryParser.parse(queryString)
 
-  def this(name: String, contentSet: scala.collection.immutable.Set[Content[T]], query: Query, id: Long) = this(name, contentSet, query.toString, id)
+  def this(name: String, contentSet: scala.collection.immutable.Set[Content], query: Query, id: Long) = this(name, contentSet, query.toString, id)
 
   private def readObject(in: java.io.ObjectInputStream) = {
     in.defaultReadObject()
@@ -30,7 +30,7 @@ case class Campaign[T <: Any](name: String, contentSet: scala.collection.immutab
     x.memoryIndex.search(query) > 0.0f
   }
 
-  private val treeMap: util.NavigableMap[Double, Content[_]] = new util.TreeMap
+  private val treeMap: util.NavigableMap[Double, Content] = new util.TreeMap
   private var total = 0.00
 
 
@@ -49,7 +49,7 @@ case class Campaign[T <: Any](name: String, contentSet: scala.collection.immutab
     hasher.hash()
   }
 
-  def resolveContent(uuid: UUID): Content[_] = {
+  def resolveContent(uuid: UUID): Content = {
     val bb = ByteBuffer.wrap(new Array[Byte](20))
     bb.putLong(uuid.getMostSignificantBits)
     bb.putLong(uuid.getLeastSignificantBits)
@@ -57,7 +57,7 @@ case class Campaign[T <: Any](name: String, contentSet: scala.collection.immutab
     resolveContent(bb.array())
   }
 
-  def resolveContent(seed: Array[Byte]): Content[_] = {
+  def resolveContent(seed: Array[Byte]): Content = {
     val value = new XORShiftRNG(seed).nextDouble() * total
     treeMap.ceilingEntry(value).getValue
   }

@@ -7,15 +7,15 @@ import org.target.UUIDGenarator
 /**
  * Created by Viddu on 6/6/2015.
  */
-case class Content[T](name: String,
-                      description: String,
-                      contentId: Long,
-                      content: T,
-                      weight: Double
-                       ) {
+case class Content(name: String,
+                   description: String,
+                   contentId: Long,
+                   content: String,
+                   weight: Double
+                    ) {
   def this(name: String,
            description: String,
-           content: T,
+           content: String,
            weight: Double) = this(name, description, UUIDGenarator.generate.getMostSignificantBits, content, weight)
 
   require(weight > 0)

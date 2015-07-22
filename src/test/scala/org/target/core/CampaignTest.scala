@@ -54,7 +54,7 @@ class CampaignTest extends UnitSpec {
     //De-Serialize
     val bufin = new ByteArrayInputStream(bufout.toByteArray)
     val obin = new ObjectInputStream(bufin)
-    val deSerializedCampaign = obin.readObject().asInstanceOf[Campaign[String]]
+    val deSerializedCampaign = obin.readObject().asInstanceOf[Campaign]
 
     deSerializedCampaign should equal(campaign)
   }
@@ -68,7 +68,7 @@ class CampaignTest extends UnitSpec {
     //De-Serialize
     val bufin = new ByteArrayInputStream(bufout.toByteArray)
     val obin = new ObjectInputStream(bufin)
-    val deSerializedCampaign = obin.readObject().asInstanceOf[Campaign[String]]
+    val deSerializedCampaign = obin.readObject().asInstanceOf[Campaign]
 
     deSerializedCampaign should equal(campaign20140101_20150101)
   }

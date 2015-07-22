@@ -20,7 +20,7 @@ class CampaignServletTest extends UnitSpec with ScalatraSuite with ContentFixtur
 
 
   "get all campaigns" should "return no results " in {
-    val campaignSet = collection.mutable.Set[Campaign[_]] {
+    val campaignSet = collection.mutable.Set[Campaign] {
       campaign
     }
     when(mockCampaignDb.readAll()).thenReturn(campaignSet)
@@ -32,7 +32,7 @@ class CampaignServletTest extends UnitSpec with ScalatraSuite with ContentFixtur
       val name = compact(render(jsonAst \ "name"))
       id should equal("1")
       name should equal("\"DUMMY\"")
-      val content = (jsonAst \ "contentSet").extract[List[Content[String]]]
+      val content = (jsonAst \ "contentSet").extract[List[Content]]
       logger.debug("Content name={}", content(0).name)
       val queryString = compact(render(jsonAst \ "queryString"))
       logger.debug("query string = {}", queryString)

@@ -14,5 +14,5 @@ class RedisCampaignDb extends CampaignDb{
   private val manager = new DefaultCacheManager()
   manager.defineConfiguration("campaign-cache", new ConfigurationBuilder().persistence().passivation(false).addStore(classOf[RedisStoreConfigurationBuilder])
     .url(new URI("redis://localhost:6379/0")).build())
-  val cache = manager.getCache[Long, Campaign[_]]("campaign-cache")
+  val cache = manager.getCache[Long, Campaign]("campaign-cache")
 }

@@ -9,14 +9,14 @@ import scala.collection.JavaConversions._
  * Created by Viddu on 6/13/2015.
  */
 abstract class CampaignDb {
-  val cache: Cache[Long, Campaign[_]]
+  val cache: Cache[Long, Campaign]
 
-  def create(campaign: Campaign[_]): Long = {
+  def create(campaign: Campaign): Long = {
     cache.put(campaign.id, campaign)
     campaign.id
   }
 
-  def update(campaign: Campaign[_]) = {
+  def update(campaign: Campaign) = {
     cache.replace(campaign.id, campaign)
   }
 
@@ -24,11 +24,11 @@ abstract class CampaignDb {
     cache.remove(id)
   }
 
-  def read(id: Long): Campaign[_] = {
+  def read(id: Long): Campaign = {
     cache.get(id)
   }
 
-  def readAll(): collection.mutable.Set[Campaign[_]] = {
+  def readAll(): collection.mutable.Set[Campaign] = {
     val keys: collection.mutable.Set[Long] = cache.keySet
     keys.map(key => cache.get(key))
   }
