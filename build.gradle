@@ -37,6 +37,7 @@ dependencies {
     compile 'net.jcip:jcip-annotations:1.0'
     compile 'com.viddu.infinispan.redis:infinispan-cachestore-redis:1.0'
     compile 'com.fasterxml.jackson.module:jackson-module-scala_2.11:2.5.3'
+    compile 'com.google.inject:guice:4.0'
     testCompile 'org.json4s:json4s-jackson_2.11:3.3.0.RC3'
     testCompile 'org.assertj:assertj-core:3.0.0'
     testCompile 'org.mockito:mockito-all:1.10.19'

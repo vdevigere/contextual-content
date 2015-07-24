@@ -1,9 +1,10 @@
 package org.target
 
+import com.google.inject.{AbstractModule, Guice}
 import io.undertow.servlet.Servlets
 import io.undertow.{Handlers, Undertow}
 import org.slf4j.LoggerFactory
-import org.target.db.RedisCampaignDb
+import org.target.db.{CampaignDb, RedisCampaignDb}
 import org.target.servlet.CampaignServlet
 import org.target.utils.ImplicitConversions._
 
@@ -12,13 +13,18 @@ import org.target.utils.ImplicitConversions._
  */
 object StartServer extends App {
   val logger = LoggerFactory.getLogger(StartServer.getClass)
+  val injector = Guice.createInjector(new AbstractModule() {
+    override def configure(): Unit = {
+      bind(classOf[CampaignDb]).to(classOf[RedisCampaignDb])
+    }
+  })
 
   val servletBuilder = Servlets.deployment()
     .setClassLoader(StartServer.getClass.getClassLoader)
     .setContextPath("/context")
     .setDeploymentName("context.war")
     .addServlets(
-      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], new CampaignServlet(new RedisCampaignDb)).addMapping("/*")
+      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], injector.getInstance(classOf[CampaignServlet])).addMapping("/*")
     )
   val manager = Servlets.defaultContainer().addDeployment(servletBuilder)
   manager.deploy()

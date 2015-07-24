@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.uuid.Generators
+import com.google.inject.Inject
 import org.joda.time.DateTime
 import org.scalatra._
 import org.slf4j.LoggerFactory
@@ -13,7 +14,7 @@ import org.target.context.UserContext
 import org.target.core.{Campaign, Content}
 import org.target.db.CampaignDb
 
-class CampaignServlet(campaignDb: CampaignDb) extends ScalatraServlet {
+class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet {
 
   import org.target.servlet.CampaignServlet._
 
