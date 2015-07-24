@@ -4,6 +4,7 @@ import java.nio.ByteBuffer
 import java.util
 import java.util.UUID
 
+import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty, JsonCreator}
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import org.apache.lucene.analysis.standard.StandardAnalyzer
@@ -16,9 +17,14 @@ import org.uncommons.maths.random.XORShiftRNG
 /**
  * Created by Viddu on 6/7/2015.
  */
-case class Campaign(name: String, contentSet: scala.collection.immutable.Set[Content], queryString: String = "*:*", id: Long = UUIDGenarator.generate.getMostSignificantBits) extends Serializable {
+case class Campaign @JsonCreator()(
+                                    @JsonProperty("name") name: String,
+                                    @JsonProperty("contentSet") contentSet: scala.collection.immutable.Set[Content],
+                                    @JsonProperty("queryString") queryString: String = "*:*",
+                                    @JsonProperty("id") id: Long = UUIDGenarator.generate.getMostSignificantBits) extends Serializable {
   @transient private var query: Query = Campaign.queryParser.parse(queryString)
 
+  @JsonIgnore
   def this(name: String, contentSet: scala.collection.immutable.Set[Content], query: Query, id: Long) = this(name, contentSet, query.toString, id)
 
   private def readObject(in: java.io.ObjectInputStream) = {
