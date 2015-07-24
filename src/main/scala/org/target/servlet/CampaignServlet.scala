@@ -30,10 +30,16 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
 
   val logger = LoggerFactory.getLogger(classOf[CampaignServlet])
 
+  /**
+   * Get all campaigns
+   */
   get("/campaigns") {
     campaignDb.readAll()
   }
 
+  /**
+   * Create a new campaign
+   */
   post("/campaigns") {
     val campaignName = params("campaignName")
     val names = multiParams("name")
@@ -52,10 +58,16 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
     campaign.id
   }
 
+  /**
+   * Get a campaign by Id
+   */
   get("/campaigns/:id") {
     campaignDb.read(params("id").toLong)
   }
 
+  /**
+   * Update an existing campaign by Id
+   */
   put("/campaigns/:id") {
     val campaignName = params("campaignName")
     val queryString = params("queryString")
@@ -75,6 +87,9 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
     campaign.id
   }
 
+  /**
+   * Delete a campaign by Id
+   */
   delete("/campaigns/:id") {
     campaignDb.delete(params("id").toLong)
   }
@@ -90,12 +105,18 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
       Generators.randomBasedGenerator().generate()
   }
 
+  /**
+   * Weighted random selection of a content for a given campaign Id
+   */
   get("/campaigns/:id/content/random") {
     val seedUUID = getSeedCookie(request)
     resetSeedCookie(seedUUID)
     campaignDb.read(params("id").toLong).resolveContent(seedUUID)
   }
 
+  /**
+   * Weighted random selection of content(s) for all Campaigns
+   */
   get("/campaigns/content/random") {
     val seedUUID = getSeedCookie(request)
     resetSeedCookie(seedUUID)
