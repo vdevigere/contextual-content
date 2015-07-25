@@ -121,7 +121,7 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
     val seedUUID = getSeedCookie(request)
     resetSeedCookie(seedUUID)
     val userContext = new UserContext(new DateTime)
-    campaignDb.readAll().filter(_.condition(userContext)).map(_.resolveContent(seedUUID))
+    campaignDb.readAll().filter(_.condition(userContext.memoryIndex)).map(_.resolveContent(seedUUID))
   }
 }
 

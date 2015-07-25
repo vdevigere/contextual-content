@@ -4,14 +4,14 @@ import java.nio.ByteBuffer
 import java.util
 import java.util.UUID
 
-import com.fasterxml.jackson.annotation.{JsonIgnore, JsonProperty, JsonCreator}
+import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnore, JsonProperty}
 import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import org.apache.lucene.analysis.standard.StandardAnalyzer
+import org.apache.lucene.index.memory.MemoryIndex
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.Query
 import org.target.UUIDGenarator
-import org.target.context.UserContext
 import org.uncommons.maths.random.XORShiftRNG
 
 /**
@@ -32,8 +32,8 @@ case class Campaign @JsonCreator()(
     query = Campaign.queryParser.parse(queryString)
   }
 
-  def condition(x: UserContext): Boolean = {
-    x.memoryIndex.search(query) > 0.0f
+  def condition(index: MemoryIndex): Boolean = {
+    index.search(query) > 0.0f
   }
 
   private val treeMap: util.NavigableMap[Double, Content] = new util.TreeMap

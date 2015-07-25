@@ -32,7 +32,7 @@ class CampaignTest extends UnitSpec {
     val campaign20140101_20150101 = new Campaign("DUMMY", Array(contentA, contentB).toSet, queryString)
     val userDate = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20140701")
     val user = new UserContext(userDate)
-    campaign20140101_20150101.condition(user) shouldBe true
+    campaign20140101_20150101.condition(user.memoryIndex) shouldBe true
   }
 
   "User request date outside of the campaign date range" should "NOT match campaign" in new ContentFixture {
@@ -40,14 +40,14 @@ class CampaignTest extends UnitSpec {
     val campaign20140101_20150101 = new Campaign("DUMMY", Array(contentA, contentB).toSet, queryString)
     val userDate = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20160701")
     val user = new UserContext(userDate)
-    campaign20140101_20150101.condition(user) shouldBe false
+    campaign20140101_20150101.condition(user.memoryIndex) shouldBe false
   }
 
 
   "Campaigns with no query strings" should "match all user requests" in new ContentFixture {
     val userDate = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20160701")
     val user = new UserContext(userDate)
-    campaign.condition(user) shouldBe true
+    campaign.condition(user.memoryIndex) shouldBe true
   }
 
   "Campaign with no query string" should "be serialzable" in new ContentFixture {
