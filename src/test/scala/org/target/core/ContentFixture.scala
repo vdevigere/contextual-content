@@ -1,5 +1,7 @@
 package org.target.core
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.apache.lucene.search.MatchAllDocsQuery
 
 /**
@@ -10,5 +12,6 @@ trait ContentFixture {
   val contentB = new Content("B", "B Content", 0L, "Banner B", 25.0)
 
   val campaign = new Campaign("DUMMY", Array(contentA, contentB).toSet, new MatchAllDocsQuery, 1L)
+  implicit val mapper = new ObjectMapper().registerModule(DefaultScalaModule)
 
 }

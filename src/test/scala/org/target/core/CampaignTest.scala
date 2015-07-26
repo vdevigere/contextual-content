@@ -2,8 +2,6 @@ package org.target.core
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import org.apache.lucene.index.memory.MemoryIndex
 import org.slf4j.LoggerFactory
 import org.target.UnitSpec
@@ -82,8 +80,6 @@ class CampaignTest extends UnitSpec {
 
   "Campaign with query string" should "be serializable/de-serializable from/to JSON" in new ContentFixture {
     val campaign20140101_20150101 = new Campaign("DUMMY", Array(contentA, contentB).toSet, "timeStamp:[20140101 TO  20150101]", 1L)
-    val mapper = new ObjectMapper()
-    mapper.registerModule(DefaultScalaModule)
     val campaignJson = mapper.writeValueAsString(campaign20140101_20150101)
     logger.debug("Campaign JSON={}", campaignJson)
     val deserializedCampaign = mapper.readValue(campaignJson, classOf[Campaign])

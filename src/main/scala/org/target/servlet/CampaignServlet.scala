@@ -8,7 +8,6 @@ import _root_.akka.actor.ActorSystem
 import _root_.akka.pattern.ask
 import _root_.akka.util.Timeout
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.uuid.Generators
 import com.google.inject.Inject
 import org.apache.lucene.index.memory.MemoryIndex
@@ -20,7 +19,7 @@ import org.target.db.CampaignDb
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet with FutureSupport {
+class CampaignServlet @Inject()(campaignDb: CampaignDb)(implicit mapper: ObjectMapper) extends ScalatraServlet with FutureSupport {
 
   import org.target.servlet.CampaignServlet._
 
@@ -129,15 +128,10 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
     new AsyncResult() {
       override val is: Future[_] = {
         implicit val timeout = Timeout(5, TimeUnit.SECONDS)
-
         val indexedFuture = (indexer ? request).mapTo[MemoryIndex]
-        implicit val ec = actorSystem.dispatcher
         val seedUUID = getSeedCookie(request)
         resetSeedCookie(seedUUID)
         indexedFuture.map(memoryIndex => campaignDb.readAll().filter(_.condition(memoryIndex)).map(_.resolveContent(seedUUID)))
-        //        val memoryIndex = Await.result(indexedFuture, timeout.duration).asInstanceOf[MemoryIndex]
-        //        logger.debug("MemoryIndex:{}", memoryIndex)
-        //        campaignDb.readAll().filter(_.condition(memoryIndex)).map(_.resolveContent(seedUUID))
       }
     }
 
@@ -145,8 +139,6 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
 }
 
 object CampaignServlet {
-  val mapper = new ObjectMapper()
-  mapper.registerModule(DefaultScalaModule)
   val actorSystem = ActorSystem("contextual-content")
   val indexer = actorSystem.actorOf(IndexActor.props)
 }

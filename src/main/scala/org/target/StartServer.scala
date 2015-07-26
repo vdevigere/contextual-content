@@ -1,5 +1,7 @@
 package org.target
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.google.inject.{AbstractModule, Guice}
 import io.undertow.servlet.Servlets
 import io.undertow.{Handlers, Undertow}
@@ -16,6 +18,7 @@ object StartServer extends App {
   val injector = Guice.createInjector(new AbstractModule() {
     override def configure(): Unit = {
       bind(classOf[CampaignDb]).to(classOf[RedisCampaignDb])
+      bind(classOf[ObjectMapper]).toInstance(new ObjectMapper().registerModule(DefaultScalaModule))
     }
   })
 

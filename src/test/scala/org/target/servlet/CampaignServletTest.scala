@@ -6,7 +6,7 @@ import org.mockito.Mockito._
 import org.scalatra.test.scalatest.ScalatraSuite
 import org.slf4j.LoggerFactory
 import org.target.UnitSpec
-import org.target.core.{Content, Campaign, ContentFixture}
+import org.target.core.{Campaign, Content, ContentFixture}
 import org.target.db.CampaignDb
 
 /**
