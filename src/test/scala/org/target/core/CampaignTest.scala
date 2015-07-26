@@ -4,10 +4,11 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, 
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import org.joda.time.format.DateTimeFormat
+import org.apache.lucene.index.memory.MemoryIndex
 import org.slf4j.LoggerFactory
 import org.target.UnitSpec
-import org.target.context.UserContext
+
+import scala.collection.JavaConversions._
 
 /**
  * Created by Viddu on 7/8/2015.
@@ -30,24 +31,25 @@ class CampaignTest extends UnitSpec {
   "User request date inside of the campaign date range" should "match campaign" in new ContentFixture {
     val queryString = "timeStamp:[20140101 TO  20150101]"
     val campaign20140101_20150101 = new Campaign("DUMMY", Array(contentA, contentB).toSet, queryString)
-    val userDate = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20140701")
-    val user = new UserContext(userDate)
-    campaign20140101_20150101.condition(user.memoryIndex) shouldBe true
+    //val userDate: DateTime = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20140701")
+    val memoryIndex = new MemoryIndex()
+    memoryIndex.addField("timeStamp", memoryIndex.keywordTokenStream(List("20140701")))
+    campaign20140101_20150101.condition(memoryIndex) shouldBe true
   }
 
   "User request date outside of the campaign date range" should "NOT match campaign" in new ContentFixture {
     val queryString = "timeStamp:[20140101 TO  20150101]"
     val campaign20140101_20150101 = new Campaign("DUMMY", Array(contentA, contentB).toSet, queryString)
-    val userDate = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20160701")
-    val user = new UserContext(userDate)
-    campaign20140101_20150101.condition(user.memoryIndex) shouldBe false
+    val memoryIndex = new MemoryIndex()
+    memoryIndex.addField("timeStamp", memoryIndex.keywordTokenStream(List("20160701")))
+    campaign20140101_20150101.condition(memoryIndex) shouldBe false
   }
 
 
   "Campaigns with no query strings" should "match all user requests" in new ContentFixture {
-    val userDate = DateTimeFormat.forPattern("yyyyMMdd").parseDateTime("20160701")
-    val user = new UserContext(userDate)
-    campaign.condition(user.memoryIndex) shouldBe true
+    val memoryIndex = new MemoryIndex()
+    memoryIndex.addField("timeStamp", memoryIndex.keywordTokenStream(List("20160701")))
+    campaign.condition(memoryIndex) shouldBe true
   }
 
   "Campaign with no query string" should "be serialzable" in new ContentFixture {

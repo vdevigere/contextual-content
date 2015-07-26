@@ -1,22 +1,30 @@
 package org.target.servlet
 
 import java.util.UUID
+import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest
 
+import _root_.akka.actor.ActorSystem
+import akka.pattern.ask
+import akka.util.Timeout
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.uuid.Generators
 import com.google.inject.Inject
-import org.joda.time.DateTime
-import org.scalatra._
+import org.apache.lucene.index.memory.MemoryIndex
+import org.scalatra.{Cookie, RenderPipeline, ScalatraServlet}
 import org.slf4j.LoggerFactory
-import org.target.context.UserContext
+import org.target.context.IndexActor
 import org.target.core.{Campaign, Content}
 import org.target.db.CampaignDb
+
+import scala.concurrent.Await
 
 class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet {
 
   import org.target.servlet.CampaignServlet._
+
+  implicit val timeout = Timeout(5, TimeUnit.SECONDS) // needed for `?` below
 
   before() {
     contentType = "application/json"
@@ -118,14 +126,19 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
    * Weighted random selection of content(s) for all Campaigns
    */
   get("/campaigns/content/random") {
+    val indexedFuture = indexer ? request
+    implicit val ec = actorSystem.dispatcher
     val seedUUID = getSeedCookie(request)
     resetSeedCookie(seedUUID)
-    val userContext = new UserContext(new DateTime)
-    campaignDb.readAll().filter(_.condition(userContext.memoryIndex)).map(_.resolveContent(seedUUID))
+    val memoryIndex = Await.result(indexedFuture, timeout.duration).asInstanceOf[MemoryIndex]
+    logger.debug("MemoryIndex:{}", memoryIndex)
+    campaignDb.readAll().filter(_.condition(memoryIndex)).map(_.resolveContent(seedUUID))
   }
 }
 
 object CampaignServlet {
   val mapper = new ObjectMapper()
   mapper.registerModule(DefaultScalaModule)
+  val actorSystem = ActorSystem("contextual-content")
+  val indexer = actorSystem.actorOf(IndexActor.props)
 }

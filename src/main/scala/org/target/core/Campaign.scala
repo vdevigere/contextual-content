@@ -32,9 +32,7 @@ case class Campaign @JsonCreator()(
     query = Campaign.queryParser.parse(queryString)
   }
 
-  def condition(index: MemoryIndex): Boolean = {
-    index.search(query) > 0.0f
-  }
+  def condition(index: MemoryIndex): Boolean = index.search(query) > 0.0f
 
   private val treeMap: util.NavigableMap[Double, Content] = new util.TreeMap
   private var total = 0.00
