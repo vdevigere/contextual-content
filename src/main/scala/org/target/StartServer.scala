@@ -24,7 +24,7 @@ object StartServer extends App {
     .setContextPath("/context")
     .setDeploymentName("context.war")
     .addServlets(
-      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], injector.getInstance(classOf[CampaignServlet])).addMapping("/*")
+      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], injector.getInstance(classOf[CampaignServlet])).addMapping("/*").setAsyncSupported(true)
     )
   val manager = Servlets.defaultContainer().addDeployment(servletBuilder)
   manager.deploy()

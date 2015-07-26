@@ -5,26 +5,26 @@ import java.util.concurrent.TimeUnit
 import javax.servlet.http.HttpServletRequest
 
 import _root_.akka.actor.ActorSystem
-import akka.pattern.ask
-import akka.util.Timeout
+import _root_.akka.pattern.ask
+import _root_.akka.util.Timeout
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.fasterxml.uuid.Generators
 import com.google.inject.Inject
 import org.apache.lucene.index.memory.MemoryIndex
-import org.scalatra.{Cookie, RenderPipeline, ScalatraServlet}
+import org.scalatra._
 import org.slf4j.LoggerFactory
 import org.target.context.IndexActor
 import org.target.core.{Campaign, Content}
 import org.target.db.CampaignDb
 
-import scala.concurrent.Await
+import scala.concurrent.{ExecutionContext, Future}
 
-class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet {
+class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet with FutureSupport {
 
   import org.target.servlet.CampaignServlet._
 
-  implicit val timeout = Timeout(5, TimeUnit.SECONDS) // needed for `?` below
+  override protected implicit def executor: ExecutionContext = actorSystem.dispatcher
 
   before() {
     contentType = "application/json"
@@ -126,13 +126,21 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet 
    * Weighted random selection of content(s) for all Campaigns
    */
   get("/campaigns/content/random") {
-    val indexedFuture = indexer ? request
-    implicit val ec = actorSystem.dispatcher
-    val seedUUID = getSeedCookie(request)
-    resetSeedCookie(seedUUID)
-    val memoryIndex = Await.result(indexedFuture, timeout.duration).asInstanceOf[MemoryIndex]
-    logger.debug("MemoryIndex:{}", memoryIndex)
-    campaignDb.readAll().filter(_.condition(memoryIndex)).map(_.resolveContent(seedUUID))
+    new AsyncResult() {
+      override val is: Future[_] = {
+        implicit val timeout = Timeout(5, TimeUnit.SECONDS)
+
+        val indexedFuture = (indexer ? request).mapTo[MemoryIndex]
+        implicit val ec = actorSystem.dispatcher
+        val seedUUID = getSeedCookie(request)
+        resetSeedCookie(seedUUID)
+        indexedFuture.map(memoryIndex => campaignDb.readAll().filter(_.condition(memoryIndex)).map(_.resolveContent(seedUUID)))
+        //        val memoryIndex = Await.result(indexedFuture, timeout.duration).asInstanceOf[MemoryIndex]
+        //        logger.debug("MemoryIndex:{}", memoryIndex)
+        //        campaignDb.readAll().filter(_.condition(memoryIndex)).map(_.resolveContent(seedUUID))
+      }
+    }
+
   }
 }
 
