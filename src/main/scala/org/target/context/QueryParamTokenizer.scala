@@ -10,7 +10,8 @@ import org.target.core.TokenizingActor
  */
 class QueryParamTokenizer(queryParam: String) extends TokenizingActor {
   override def tokenize(request: HttpServletRequest): Iterable[String] = {
-    List(request.getParameter(queryParam))
+    val queryParamValue = request.getParameter(queryParam)
+    if (queryParamValue != null) List(queryParamValue) else List.empty
   }
 
   override val fieldName: String = queryParam
