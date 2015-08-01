@@ -5,7 +5,6 @@ import java.util
 import java.util.UUID
 
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnore, JsonProperty}
-import com.google.common.base.Charsets
 import com.google.common.hash.Hashing
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.memory.MemoryIndex
@@ -43,12 +42,8 @@ case class Campaign @JsonCreator()(
     treeMap.put(total, content)
   })
 
-  override def hashCode: Int = {
-    hash.asInt()
-  }
-
   private def hash = {
-    val hasher = Hashing.murmur3_32().newHasher().putString(name, Charsets.UTF_8).putLong(id)
+    val hasher = Hashing.murmur3_32().newHasher().putInt(this.hashCode)
     contentSet.foreach(content => hasher.putInt(content.hashCode))
     hasher.hash()
   }

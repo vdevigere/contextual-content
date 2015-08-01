@@ -59,7 +59,7 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb)(implicit mapper: ObjectM
     logger.debug("Content Desc: {}", descriptions)
     logger.debug("Weight: {}", weights)
 
-    val contentList = for (index <- 0 to names.length - 1) yield new Content(names(index), descriptions(index), contents(index), weights(index).toDouble)
+    val contentList = for (index <- 0 to names.length - 1) yield new Content(names(index), descriptions(index), contents(index).getBytes, weights(index).toDouble)
     val campaign = new Campaign(campaignName, contentList.toSet, queryString)
     campaignDb.create(campaign)
     campaign.id
@@ -88,7 +88,7 @@ class CampaignServlet @Inject()(campaignDb: CampaignDb)(implicit mapper: ObjectM
     logger.debug("Weight: {}", weights)
     logger.debug("QueryString: {}", queryString)
 
-    val contentList = for (index <- 0 to names.length - 1) yield new Content(names(index), descriptions(index), contents(index), weights(index).toDouble)
+    val contentList = for (index <- 0 to names.length - 1) yield new Content(names(index), descriptions(index), contents(index).getBytes, weights(index).toDouble)
     val campaign = new Campaign(campaignName, contentList.toSet, queryString, params("id").toLong)
     campaignDb.update(campaign)
     campaign.id
