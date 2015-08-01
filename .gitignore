@@ -90,3 +90,7 @@ local.properties
 *.iml
 *.iws
 *.ipr
+
+# IntelliJ
+target/
+project/
