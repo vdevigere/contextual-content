@@ -21,15 +21,10 @@ case class Campaign @JsonCreator()(
                                     @JsonProperty("contentSet") contentSet: scala.collection.immutable.Set[Content],
                                     @JsonProperty("queryString") queryString: String = "*:*",
                                     @JsonProperty("id") id: Long = UUIDGenarator.generate.getMostSignificantBits) extends Serializable {
-  @transient private var query: Query = Campaign.queryParser.parse(queryString)
+  @transient lazy val query: Query = Campaign.queryParser.parse(queryString)
 
   @JsonIgnore
   def this(name: String, contentSet: scala.collection.immutable.Set[Content], query: Query, id: Long) = this(name, contentSet, query.toString, id)
-
-  private def readObject(in: java.io.ObjectInputStream) = {
-    in.defaultReadObject()
-    query = Campaign.queryParser.parse(queryString)
-  }
 
   def condition(index: MemoryIndex): Boolean = index.search(query) > 0.0f
 

@@ -63,6 +63,8 @@ class CampaignTest extends UnitSpec {
     val deSerializedCampaign = obin.readObject().asInstanceOf[Campaign]
 
     deSerializedCampaign should equal(campaign)
+    deSerializedCampaign.contentSet should equal(campaign.contentSet)
+    deSerializedCampaign.query should equal(campaign.query)
   }
 
   "Campaign with query string" should "be serializable" in new ContentFixture {
@@ -77,6 +79,8 @@ class CampaignTest extends UnitSpec {
     val deSerializedCampaign = obin.readObject().asInstanceOf[Campaign]
 
     deSerializedCampaign should equal(campaign20140101_20150101)
+    deSerializedCampaign.contentSet should equal(campaign20140101_20150101.contentSet)
+    deSerializedCampaign.query should equal(campaign20140101_20150101.query)
   }
 
   "Campaign with query string" should "be serializable/de-serializable from/to JSON" in new ContentFixture {
