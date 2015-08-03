@@ -3,6 +3,7 @@ package org.target
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
 import com.google.inject.{AbstractModule, Guice}
+import com.typesafe.config.ConfigFactory
 import io.undertow.servlet.Servlets
 import io.undertow.{Handlers, Undertow}
 import org.slf4j.LoggerFactory
@@ -14,6 +15,8 @@ import org.target.utils.ImplicitConversions._
  * Created by Viddu on 6/12/2015.
  */
 object StartServer extends App {
+  val conf = ConfigFactory.load
+
   val logger = LoggerFactory.getLogger(StartServer.getClass)
   val injector = Guice.createInjector(new AbstractModule() {
     override def configure(): Unit = {
@@ -33,7 +36,7 @@ object StartServer extends App {
   manager.deploy()
 
   val server = Undertow.builder()
-    .addHttpListener(9001, "0.0.0.0")
+    .addHttpListener(conf.getInt("sengi.port"), conf.getString("sengi.host"))
     .setHandler(Handlers.path().addPrefixPath("/context", manager.start()))
     .build()
   server.start()
