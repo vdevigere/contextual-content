@@ -3,8 +3,9 @@ package org.target.core
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 
 import org.apache.lucene.index.memory.MemoryIndex
+import org.scalatest.PrivateMethodTester
 import org.slf4j.LoggerFactory
-import org.target.UnitSpec
+import org.target.{UUIDGenarator, UnitSpec}
 
 import scala.collection.JavaConversions._
 
@@ -84,5 +85,20 @@ class CampaignTest extends UnitSpec {
     logger.debug("Campaign JSON={}", campaignJson)
     val deserializedCampaign = mapper.readValue(campaignJson, classOf[Campaign])
     campaign20140101_20150101 should equal(deserializedCampaign)
+  }
+
+  "Campaign" should "have the treeMap constructed correctly" in new ContentFixture with PrivateMethodTester {
+
+    class CampaignSubClass(name: String, contentSet: scala.collection.immutable.Set[Content], queryString: String = "*:*", id: Long = UUIDGenarator.generate.getMostSignificantBits) extends Campaign(name: String, contentSet: scala.collection.immutable.Set[Content], queryString: String, id: Long) {
+      def getTreeMap = treeMap
+    }
+
+    private val contentC: Content = Content("C", "C Content", 1L, "C".getBytes, 30)
+    val myCampaign = new CampaignSubClass("DUMMY", Array(contentA, contentB, contentC).toSet, "timeStamp:[20140101 TO  20150101]", 1L)
+    myCampaign.getTreeMap.size should equal(3)
+    myCampaign.getTreeMap.lastKey should equal(130.0)
+    myCampaign.getTreeMap.get(75.0) should equal(contentA)
+    myCampaign.getTreeMap.get(100.0) should equal(contentB)
+    myCampaign.getTreeMap.get(130.0) should equal(contentC)
   }
 }

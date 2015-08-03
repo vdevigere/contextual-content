@@ -33,13 +33,10 @@ case class Campaign @JsonCreator()(
 
   def condition(index: MemoryIndex): Boolean = index.search(query) > 0.0f
 
-  private val treeMap: util.NavigableMap[Double, Content] = new util.TreeMap
-  private var total = 0.00
-
-
-  contentSet.foreach(content => {
-    total += content.weight
-    treeMap.put(total, content)
+  protected val treeMap = contentSet.foldLeft(new util.TreeMap[Double, Content])((treeMap, content) => {
+    val total = if (treeMap.size > 0) treeMap.lastKey else 0
+    treeMap.put(total + content.weight, content)
+    treeMap
   })
 
   private def hash = {
@@ -57,7 +54,7 @@ case class Campaign @JsonCreator()(
   }
 
   def resolveContent(seed: Array[Byte]): Content = {
-    val value = new XORShiftRNG(seed).nextDouble() * total
+    val value = new XORShiftRNG(seed).nextDouble() * treeMap.lastKey
     treeMap.ceilingEntry(value).getValue
   }
 }
