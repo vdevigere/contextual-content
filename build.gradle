@@ -1,6 +1,8 @@
 apply plugin: 'scala'
 apply plugin: 'idea'
+apply plugin: 'application'
 
+mainClassName = 'org.target.StartServer'
 version = '1.0'
 jar {
     manifest {
