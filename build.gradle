@@ -30,7 +30,6 @@ dependencies {
     compile 'org.apache.lucene:lucene-analyzers-common:5.2.1'
     compile 'org.apache.lucene:lucene-memory:5.2.1'
     compile 'io.undertow:undertow-servlet:1.2.7.Final'
-    compile 'io.undertow:undertow-core:1.2.7.Final'
     compile 'org.scalatra:scalatra_2.11:2.4.0.RC1'
     compile 'org.infinispan:infinispan-embedded:7.2.2.Final'
     compile 'redis.clients:jedis:2.7.2'
