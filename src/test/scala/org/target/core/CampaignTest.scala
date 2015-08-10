@@ -81,6 +81,7 @@ class CampaignTest extends UnitSpec {
     deSerializedCampaign should equal(campaign20140101_20150101)
     deSerializedCampaign.contentSet should equal(campaign20140101_20150101.contentSet)
     deSerializedCampaign.query should equal(campaign20140101_20150101.query)
+    deSerializedCampaign.treeMap.size should equal(2)
   }
 
   "Campaign with query string" should "be serializable/de-serializable from/to JSON" in new ContentFixture {
