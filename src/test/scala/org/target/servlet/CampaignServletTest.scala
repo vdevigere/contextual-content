@@ -16,7 +16,7 @@ class CampaignServletTest extends UnitSpec with ScalatraSuite with ContentFixtur
   val logger = LoggerFactory.getLogger(classOf[CampaignServletTest])
   implicit val formats = DefaultFormats
   val mockCampaignDb = mock(classOf[CampaignDb])
-  addServlet(new CampaignServlet(mockCampaignDb), "/*")
+  addServlet(new CampaignServlet(mockCampaignDb), "/campaigns/*")
 
 
   "get all campaigns" should "return no results " in {

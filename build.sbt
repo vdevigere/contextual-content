@@ -6,7 +6,7 @@ scalaVersion := "2.11.7"
 
 organization := "org.target"
 
-resolvers +=  "Local Maven Repository" at "file:///"+Path.userHome+"/.m2/repository"
+resolvers += "Local Maven Repository" at "file:///" + Path.userHome + "/.m2/repository"
 
 libraryDependencies += "com.fasterxml.uuid" % "java-uuid-generator" % "3.1.4"
 
@@ -34,6 +34,8 @@ libraryDependencies += "io.undertow" % "undertow-core" % "1.2.9.Final"
 
 libraryDependencies += "org.scalatra" % "scalatra_2.11" % "2.4.0.RC1"
 
+libraryDependencies += "org.scalatra" %% "scalatra-json" % "2.4.0.RC1"
+
 libraryDependencies += "org.infinispan" % "infinispan-embedded" % "7.2.3.Final"
 
 libraryDependencies += "redis.clients" % "jedis" % "2.7.3"
@@ -49,6 +51,8 @@ libraryDependencies += "com.typesafe.akka" % "akka-actor_2.11" % "2.3.12"
 libraryDependencies += "com.typesafe.akka" % "akka-slf4j_2.11" % "2.3.12"
 
 libraryDependencies += "com.typesafe" % "config" % "1.3.0"
+
+libraryDependencies += "org.json4s" %% "json4s-jackson" % "3.3.0.RC3"
 
 libraryDependencies += "org.scalatra" % "scalatra-scalatest_2.11" % "2.4.0.RC2-1" % Test
 

@@ -28,7 +28,7 @@ case class Campaign @JsonCreator()(
 
   def condition(index: MemoryIndex): Boolean = index.search(query) > 0.0f
 
-  protected val treeMap = contentSet.foldLeft(new util.TreeMap[Double, Content])((treeMap, content) => {
+  val treeMap = contentSet.foldLeft(new util.TreeMap[Double, Content])((treeMap, content) => {
     val total = if (treeMap.size > 0) treeMap.lastKey else 0
     treeMap.put(total + content.weight, content)
     treeMap

@@ -1,14 +1,12 @@
 package org.target
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.google.inject.{AbstractModule, Guice}
+import com.google.inject.{AbstractModule, Guice, Singleton}
 import com.typesafe.config.ConfigFactory
 import io.undertow.servlet.Servlets
 import io.undertow.{Handlers, Undertow}
 import org.slf4j.LoggerFactory
 import org.target.db.{CampaignDb, RedisCampaignDb}
-import org.target.servlet.CampaignServlet
+import org.target.servlet.{CampaignServlet, ContentSelectorServlet}
 import org.target.utils.ImplicitConversions._
 
 /**
@@ -20,8 +18,8 @@ object StartServer extends App {
   val logger = LoggerFactory.getLogger(StartServer.getClass)
   val injector = Guice.createInjector(new AbstractModule() {
     override def configure(): Unit = {
-      bind(classOf[CampaignDb]).to(classOf[RedisCampaignDb])
-      bind(classOf[ObjectMapper]).toInstance(new ObjectMapper().registerModule(DefaultScalaModule))
+      bind(classOf[CampaignDb]).to(classOf[RedisCampaignDb]).in(classOf[Singleton])
+      //bind(classOf[ObjectMapper]).toInstance(new ObjectMapper().registerModule(DefaultScalaModule))
     }
   })
 
@@ -30,7 +28,8 @@ object StartServer extends App {
     .setContextPath("/context")
     .setDeploymentName("context.war")
     .addServlets(
-      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], injector.getInstance(classOf[CampaignServlet])).addMapping("/*").setAsyncSupported(true)
+      Servlets.servlet("CampaignServlet", classOf[CampaignServlet], injector.getInstance(classOf[CampaignServlet])).addMapping("/campaigns/*"),
+      Servlets.servlet("ContentSelectorServlet", classOf[ContentSelectorServlet], injector.getInstance(classOf[ContentSelectorServlet])).addMapping("/content/*").setAsyncSupported(true)
     )
   val manager = Servlets.defaultContainer().addDeployment(servletBuilder)
   manager.deploy()
