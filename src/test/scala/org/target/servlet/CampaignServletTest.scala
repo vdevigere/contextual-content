@@ -4,7 +4,6 @@ import org.json4s._
 import org.json4s.jackson.JsonMethods._
 import org.mockito.Mockito._
 import org.scalatra.test.scalatest.ScalatraSuite
-import org.slf4j.LoggerFactory
 import org.target.UnitSpec
 import org.target.core.{Campaign, Content, ContentFixture}
 import org.target.db.CampaignDb
@@ -13,7 +12,6 @@ import org.target.db.CampaignDb
  * Created by Viddu on 7/12/2015.
  */
 class CampaignServletTest extends UnitSpec with ScalatraSuite with ContentFixture {
-  val logger = LoggerFactory.getLogger(classOf[CampaignServletTest])
   implicit val formats = DefaultFormats
   val mockCampaignDb = mock(classOf[CampaignDb])
   addServlet(new CampaignServlet(mockCampaignDb), "/campaigns/*")

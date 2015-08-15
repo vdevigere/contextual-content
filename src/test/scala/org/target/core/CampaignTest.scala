@@ -4,7 +4,6 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, 
 
 import org.apache.lucene.index.memory.MemoryIndex
 import org.scalatest.PrivateMethodTester
-import org.slf4j.LoggerFactory
 import org.target.{UUIDGenarator, UnitSpec}
 
 import scala.collection.JavaConversions._
@@ -13,7 +12,6 @@ import scala.collection.JavaConversions._
  * Created by Viddu on 7/8/2015.
  */
 class CampaignTest extends UnitSpec {
-  val logger = LoggerFactory.getLogger(classOf[CampaignTest])
 
   "for a given seed the content" should "consitently resolve to the same value" in new ContentFixture {
     campaign.resolveContent("blahblahblahblahblah".getBytes()) should equal(contentA)

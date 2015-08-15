@@ -1,16 +1,14 @@
 package org.target.servlet
 
 import com.google.inject.Inject
+import com.typesafe.scalalogging.LazyLogging
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
-import org.slf4j.LoggerFactory
 import org.target.core.{Campaign, Content}
 import org.target.db.CampaignDb
 
-class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet with JacksonJsonSupport {
-
-  val logger = LoggerFactory.getLogger(classOf[CampaignServlet])
+class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet with JacksonJsonSupport with LazyLogging{
 
   before() {
     contentType = formats("json")
