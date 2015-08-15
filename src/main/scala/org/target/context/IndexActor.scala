@@ -45,7 +45,7 @@ class IndexActor extends Actor {
       }))
       memIndexFuture pipeTo sender
     }
-    case _ => log.debug("Unknown Message received")
+    case _ => log.debug("Message received is not of type Request")
   }
 }
 

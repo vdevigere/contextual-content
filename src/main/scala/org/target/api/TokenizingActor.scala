@@ -1,4 +1,4 @@
-package org.target.core
+package org.target.api
 
 import javax.servlet.http.HttpServletRequest
 

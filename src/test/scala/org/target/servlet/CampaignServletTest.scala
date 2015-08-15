@@ -5,7 +5,7 @@ import org.json4s.jackson.JsonMethods._
 import org.mockito.Mockito._
 import org.scalatra.test.scalatest.ScalatraSuite
 import org.target.UnitSpec
-import org.target.core.{Campaign, Content, ContentFixture}
+import org.target.api.{Campaign, Content, ContentFixture}
 import org.target.db.CampaignDb
 
 /**

@@ -19,7 +19,6 @@ object StartServer extends App {
   val injector = Guice.createInjector(new AbstractModule() {
     override def configure(): Unit = {
       bind(classOf[CampaignDb]).to(classOf[RedisCampaignDb]).in(classOf[Singleton])
-      //bind(classOf[ObjectMapper]).toInstance(new ObjectMapper().registerModule(DefaultScalaModule))
     }
   })
 

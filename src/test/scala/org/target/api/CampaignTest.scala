@@ -1,10 +1,11 @@
-package org.target.core
+package org.target.api
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 
 import org.apache.lucene.index.memory.MemoryIndex
 import org.scalatest.PrivateMethodTester
-import org.target.{UUIDGenarator, UnitSpec}
+import org.target.UnitSpec
+import org.target.utils.UUIDGenarator
 
 import scala.collection.JavaConversions._
 

@@ -1,7 +1,6 @@
-package org.target.core
+package org.target.api
 
-
-import org.target.UUIDGenarator
+import org.target.utils.UUIDGenarator
 
 
 /**

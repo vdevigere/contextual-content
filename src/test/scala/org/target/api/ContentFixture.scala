@@ -1,4 +1,4 @@
-package org.target.core
+package org.target.api
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule

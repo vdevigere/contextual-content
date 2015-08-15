@@ -1,4 +1,4 @@
-package org.target.core
+package org.target.api
 
 import java.nio.ByteBuffer
 import java.util
@@ -9,7 +9,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.memory.MemoryIndex
 import org.apache.lucene.queryparser.classic.QueryParser
 import org.apache.lucene.search.Query
-import org.target.UUIDGenarator
+import org.target.utils.UUIDGenarator
 import org.uncommons.maths.random.XORShiftRNG
 
 /**

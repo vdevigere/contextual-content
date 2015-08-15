@@ -1,4 +1,4 @@
-package org.target
+package org.target.utils
 
 import java.util.UUID
 

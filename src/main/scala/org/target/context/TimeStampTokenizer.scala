@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest
 import akka.actor.Props
 import org.apache.lucene.document.DateTools
 import org.joda.time.DateTime
-import org.target.core.TokenizingActor
+import org.target.api.TokenizingActor
 
 /**
  * Created by Viddu on 7/25/2015.

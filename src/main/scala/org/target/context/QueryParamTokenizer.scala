@@ -3,7 +3,7 @@ package org.target.context
 import javax.servlet.http.HttpServletRequest
 
 import akka.actor.Props
-import org.target.core.TokenizingActor
+import org.target.api.TokenizingActor
 
 /**
  * Created by Viddu on 7/25/2015.

@@ -5,7 +5,7 @@ import com.typesafe.scalalogging.LazyLogging
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra._
 import org.scalatra.json.JacksonJsonSupport
-import org.target.core.{Campaign, Content}
+import org.target.api.{Campaign, Content}
 import org.target.db.CampaignDb
 
 class CampaignServlet @Inject()(campaignDb: CampaignDb) extends ScalatraServlet with JacksonJsonSupport with LazyLogging{
