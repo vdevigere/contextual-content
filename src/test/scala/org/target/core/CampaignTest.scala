@@ -104,4 +104,26 @@ class CampaignTest extends UnitSpec {
     myCampaign.getTreeMap.get(100.0) should equal(contentB)
     myCampaign.getTreeMap.get(130.0) should equal(contentC)
   }
+
+  "Two Campaigns with same data" should "have same hash code" in new ContentFixture {
+    val sameAsContentA = new Content("A", "A Content", 0L, "Banner A".getBytes, 75.0)
+    val sameAsContentB = new Content("B", "B Content", 0L, "Banner B".getBytes, 25.0)
+    val sameAsCampaign = new Campaign("DUMMY", Array(sameAsContentA, sameAsContentB).toSet, "*:*", 1L)
+    campaign.hashCode should equal(sameAsCampaign.hashCode)
+  }
+
+  "Two campaigns with different content" should "have different hash code" in new ContentFixture {
+    val contentC = new Content("C", "C Content", 0L, "Banner C".getBytes, 90.0)
+    val differentContent = new Campaign("DUMMY", Array(contentC, contentA).toSet, "*:*", 1L)
+    campaign.hashCode should not equal (differentContent.hashCode)
+
+    val contentAWithDifferentWeight = new Content("A", "A Content", 0L, "Banner A".getBytes, 90.0)
+    val campaignToCompare = new Campaign("DUMMY", Array(contentB, contentAWithDifferentWeight).toSet, "*:*", 1L)
+    campaign.hashCode should not equal (campaignToCompare.hashCode)
+  }
+
+  "Two campaigns with same content but in different order" should "have same hash code" in new ContentFixture {
+    val sameContentDifferentOrder = new Campaign("DUMMY", Array(contentB, contentA).toSet, "*:*", 1L)
+    campaign.hashCode should equal(sameContentDifferentOrder.hashCode)
+  }
 }

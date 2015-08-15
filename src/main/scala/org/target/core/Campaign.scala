@@ -5,7 +5,6 @@ import java.util
 import java.util.UUID
 
 import com.fasterxml.jackson.annotation.{JsonCreator, JsonIgnore, JsonProperty}
-import com.google.common.hash.Hashing
 import org.apache.lucene.analysis.standard.StandardAnalyzer
 import org.apache.lucene.index.memory.MemoryIndex
 import org.apache.lucene.queryparser.classic.QueryParser
@@ -34,17 +33,12 @@ case class Campaign @JsonCreator()(
     treeMap
   })
 
-  private def hash = {
-    val hasher = Hashing.murmur3_32().newHasher().putInt(this.hashCode)
-    contentSet.foreach(content => hasher.putInt(content.hashCode))
-    hasher.hash()
-  }
 
   def resolveContent(uuid: UUID): Content = {
     val bb = ByteBuffer.wrap(new Array[Byte](20))
     bb.putLong(uuid.getMostSignificantBits)
     bb.putLong(uuid.getLeastSignificantBits)
-    bb.put(this.hash.asBytes())
+    bb.putInt(this.hashCode)
     resolveContent(bb.array())
   }
 
