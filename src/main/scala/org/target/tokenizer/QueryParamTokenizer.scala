@@ -1,4 +1,4 @@
-package org.target.context
+package org.target.tokenizer
 
 import javax.servlet.http.HttpServletRequest
 
@@ -14,7 +14,7 @@ class QueryParamTokenizer(queryParam: String) extends TokenizingActor {
     if (queryParamValue != null) List(queryParamValue) else List.empty
   }
 
-  override val fieldName: String = queryParam
+  override def fieldName: String = queryParam
 }
 
 object QueryParamTokenizer {

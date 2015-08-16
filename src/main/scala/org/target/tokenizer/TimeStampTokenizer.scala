@@ -1,4 +1,4 @@
-package org.target.context
+package org.target.tokenizer
 
 import javax.servlet.http.HttpServletRequest
 
@@ -17,7 +17,7 @@ class TimeStampTokenizer extends TokenizingActor {
 
   }
 
-  override val fieldName: String = "timeStamp"
+  override def fieldName: String = "timeStamp"
 }
 
 object TimeStampTokenizer {

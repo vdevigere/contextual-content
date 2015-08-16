@@ -1,4 +1,4 @@
-package org.target.context
+package org.target.api
 
 import java.util
 import java.util.concurrent.TimeUnit
@@ -11,9 +11,10 @@ import akka.event.Logging
 import akka.pattern.{ask, pipe}
 import akka.util.Timeout
 import org.apache.lucene.index.memory.MemoryIndex
+import org.target.tokenizer.{QueryParamTokenizer, TimeStampTokenizer}
 
 import scala.collection.JavaConversions._
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * Created by Viddu on 7/24/2015.

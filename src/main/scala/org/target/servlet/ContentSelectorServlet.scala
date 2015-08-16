@@ -13,7 +13,7 @@ import org.apache.lucene.index.memory.MemoryIndex
 import org.json4s.{DefaultFormats, Formats}
 import org.scalatra.json.JacksonJsonSupport
 import org.scalatra.{AsyncResult, Cookie, FutureSupport, ScalatraServlet}
-import org.target.context.IndexActor
+import org.target.api.IndexActor
 import org.target.db.CampaignDb
 
 import scala.concurrent.{ExecutionContext, Future}
